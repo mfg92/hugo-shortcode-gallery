@@ -1,0 +1,75 @@
+
+<!-- Need to use scratch because of go template limitations when
+asigning variables (see https://gohugo.io/functions/scratch) -->
+{{ $s := .Scratch}}
+{{ if .Get "match"}}
+	{{$s.Set "images" (.Page.Resources.Match (.Get "match")) }}
+{{ else }}
+	{{ $s.Set "images" (.Page.Resources.ByType "image") }}
+{{ end }}
+
+{{ if .Get "rowHeight"}}
+	{{$s.Set "rowHeight" (.Get "rowHeight") }}
+{{ else }}
+	{{ $s.Set "rowHeight" (.Site.Params.galleryRowHeight | default 150) }}
+{{ end }}
+
+{{ if .Get "margins"}}
+	{{$s.Set "margins" (.Get "margins") }}
+{{ else }}
+	{{ $s.Set "margins" (.Site.Params.galleryRowMargins | default 5) }}
+{{ end }}
+
+{{ if .Get "resizeOptions"}}
+	{{$s.Set "resizeOptions" (.Get "resizeOptions") }}
+{{ else }}
+	{{ $s.Set "resizeOptions" (.Site.Params.galleryResizeOptions | default "x150 q90 Lanczos") }}
+{{ end }}
+
+<!-- Load jquery-migrate, swipebox and justified_gallery only once per page -->
+{{ if not (.Page.Scratch.Get "galleryLoaded") }}
+  {{ .Page.Scratch.Set "galleryLoaded" true }}
+	<!-- Is requiered for swipebox and must be bevor any use of jquery -->
+	<script src="/shortcode-gallery/jquery-migrate-1.4.1.min"></script>
+
+	<script src="/shortcode-gallery/swipebox/js/jquery.swipebox.min.js"></script>
+	<link rel="stylesheet" href="/shortcode-gallery/swipebox/css/swipebox.min.css">
+
+	<script src="/shortcode-gallery/justified_gallery/jquery.justifiedGallery.min.js"></script>
+	<link rel="stylesheet" href="/shortcode-gallery/justified_gallery/justifiedGallery.min.css"/>
+{{ end }}
+
+<!--
+Ordinal increases every time this shortcode is used in a document
+Ordinal: {{ .Ordinal}}
+-->
+
+{{ $galleryId := (printf "gallery_%v" .Ordinal)}}
+
+<div id="{{ $galleryId }}">
+	{{ range $original := $s.Get "images" }}
+		{{ $thumbnail := ($original.Resize ($s.Get "resizeOptions"))  }}
+		<div>
+				<a href="{{ $original.RelPermalink }}" class="galleryImg">
+					<img src="{{ $thumbnail.RelPermalink }}"/>
+				</a>
+		</div>
+	{{ end }}
+</div>
+
+<script>
+	if (!jQuery) {
+	    alert("jquery is not loaded");
+	}
+
+	$( document ).ready(function() {
+    $("#{{ $galleryId }}").justifiedGallery({
+      rowHeight : {{ $s.Get "rowHeight" }},
+      margins : {{ $s.Get "margins" }},
+			border : 0,
+    })
+		.on('jg.complete', function () {
+	    $('.galleryImg').swipebox();
+		});
+  });
+</script>
