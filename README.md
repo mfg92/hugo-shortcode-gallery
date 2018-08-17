@@ -1,6 +1,6 @@
 # hugo-shortcode-gallery
 
-This is a theme component for hugo. 
+This is a theme component for hugo (>= 0.42). 
 
 This component contains a shortcode to include a gallery in your .md files.
 
