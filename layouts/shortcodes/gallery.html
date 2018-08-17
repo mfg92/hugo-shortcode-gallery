@@ -26,9 +26,20 @@ asigning variables (see https://gohugo.io/functions/scratch) -->
 	{{ $s.Set "resizeOptions" (.Site.Params.galleryResizeOptions | default "x150 q90 Lanczos") }}
 {{ end }}
 
+{{ if .Get "loadJQuery"}}
+	{{$s.Set "loadJQuery" (.Get "loadJQuery") }}
+{{ else }}
+	{{ $s.Set "loadJQuery" (.Site.Params.galleryLoadJQuery | default false) }}
+{{ end }}
+
 <!-- Load jquery-migrate, swipebox and justified_gallery only once per page -->
 {{ if not (.Page.Scratch.Get "galleryLoaded") }}
   {{ .Page.Scratch.Set "galleryLoaded" true }}
+
+	{{ if (.Page.Scratch.Get "loadJQuery") }}
+			<script src="/shortcode-gallery/jquery-3.3.1.slim.min.js"></script>
+	{{ end }}
+
 	<!-- Is requiered for swipebox and must be bevor any use of jquery -->
 	<script src="/shortcode-gallery/jquery-migrate-1.4.1.min"></script>
 
