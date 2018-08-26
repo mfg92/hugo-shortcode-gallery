@@ -74,13 +74,13 @@ Ordinal: {{ .Ordinal}}
 	}
 
 	$( document ).ready(function() {
-    $("#{{ $galleryId }}").justifiedGallery({
-      rowHeight : {{ $s.Get "rowHeight" }},
-      margins : {{ $s.Get "margins" }},
+		$("#{{ $galleryId }}").justifiedGallery({
+			rowHeight : {{ $s.Get "rowHeight" }},
+			margins : {{ $s.Get "margins" }},
 			border : 0,
-    })
+		})
 		.on('jg.complete', function () {
-	    $('.galleryImg').swipebox();
+			$('.galleryImg').swipebox();
 		});
-  });
+  	});
 </script>
