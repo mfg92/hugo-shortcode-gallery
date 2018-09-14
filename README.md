@@ -1,6 +1,6 @@
 # hugo-shortcode-gallery
 
-This is a theme component for hugo (>= 0.42). 
+This is a theme component for hugo. 
 
 This component contains a shortcode to include a gallery in your .md files.
 
@@ -52,6 +52,9 @@ As many websites/themes already include *jQuery*, this theme component will use 
 If the page does not already use *jQuery* the paramter `loadJQuery=true` must be used to 
 instruct the theme component to load the provided *jQuery* lib.
 
+## Requirements
+
+This component requieres a hugo version >= 0.48.
 
 ## Dependencies
 

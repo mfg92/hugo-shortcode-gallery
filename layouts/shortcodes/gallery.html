@@ -1,42 +1,23 @@
 
-<!-- Need to use scratch because of go template limitations when
-asigning variables (see https://gohugo.io/functions/scratch) -->
-{{ $s := .Scratch}}
+{{ $images := (.Page.Resources.ByType "image") }}
 {{ if .Get "match"}}
-	{{$s.Set "images" (.Page.Resources.Match (.Get "match")) }}
-{{ else }}
-	{{ $s.Set "images" (.Page.Resources.ByType "image") }}
+	{{ $images = (.Page.Resources.Match (.Get "match")) }}
 {{ end }}
 
-{{ if .Get "rowHeight"}}
-	{{$s.Set "rowHeight" (.Get "rowHeight") }}
-{{ else }}
-	{{ $s.Set "rowHeight" (.Site.Params.galleryRowHeight | default 150) }}
-{{ end }}
+{{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
 
-{{ if .Get "margins"}}
-	{{$s.Set "margins" (.Get "margins") }}
-{{ else }}
-	{{ $s.Set "margins" (.Site.Params.galleryRowMargins | default 5) }}
-{{ end }}
+{{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
 
-{{ if .Get "resizeOptions"}}
-	{{$s.Set "resizeOptions" (.Get "resizeOptions") }}
-{{ else }}
-	{{ $s.Set "resizeOptions" (.Site.Params.galleryResizeOptions | default "x150 q90 Lanczos") }}
-{{ end }}
+{{ $resizeOptions := .Get "resizeOptions" | default (.Site.Params.galleryResizeOptions | default "x150 q90 Lanczos") }}
 
-{{ if .Get "loadJQuery"}}
-	{{$s.Set "loadJQuery" (.Get "loadJQuery") }}
-{{ else }}
-	{{ $s.Set "loadJQuery" (.Site.Params.galleryLoadJQuery | default false) }}
-{{ end }}
+{{ $loadJQuery := .Get "loadJQuery" | default (.Site.Params.galleryLoadJQuery | default false) }}
+
 
 <!-- Load jquery-migrate, swipebox and justified_gallery only once per page -->
 {{ if not (.Page.Scratch.Get "galleryLoaded") }}
   {{ .Page.Scratch.Set "galleryLoaded" true }}
 
-	{{ if (.Page.Scratch.Get "loadJQuery") }}
+	{{ if $loadJQuery }}
 			<script src="/shortcode-gallery/jquery-3.3.1.slim.min.js"></script>
 	{{ end }}
 
@@ -58,8 +39,8 @@ Ordinal: {{ .Ordinal}}
 {{ $galleryId := (printf "gallery_%v" .Ordinal)}}
 
 <div id="{{ $galleryId }}">
-	{{ range $original := $s.Get "images" }}
-		{{ $thumbnail := ($original.Resize ($s.Get "resizeOptions"))  }}
+	{{ range $original := $images }}
+		{{ $thumbnail := ($original.Resize ($resizeOptions))  }}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
 					<img src="{{ $thumbnail.RelPermalink }}"/>
@@ -75,8 +56,8 @@ Ordinal: {{ .Ordinal}}
 
 	$( document ).ready(function() {
 		$("#{{ $galleryId }}").justifiedGallery({
-			rowHeight : {{ $s.Get "rowHeight" }},
-			margins : {{ $s.Get "margins" }},
+			rowHeight : {{ $rowHeight }},
+			margins : {{ $margins }},
 			border : 0,
 		})
 		.on('jg.complete', function () {
