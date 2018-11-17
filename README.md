@@ -60,5 +60,4 @@ This component requieres a hugo version >= 0.48.
 
 The component uses (and includes) [*Justified Gallery*](http://miromannino.github.io/Justified-Gallery/)
 to render the images between the text and [*Swipebox*](http://brutaldesign.github.io/swipebox/)
-to show them fullscreen. Also *jquery-migrate-1.4* is used to let *Swipebox* work
-with newer jQuery versions.
+to show them fullscreen.
