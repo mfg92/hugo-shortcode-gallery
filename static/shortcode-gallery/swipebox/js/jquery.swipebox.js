@@ -3,6 +3,7 @@
 	With fixes from PR
 	https://github.com/brutaldesign/swipebox/pull/324
 	https://github.com/brutaldesign/swipebox/pull/298
+	https://github.com/brutaldesign/swipebox/pull/287
 */
 ;( function ( window, document, $, undefined ) {
 
@@ -29,6 +30,7 @@
 				autoplayVideos: false,
 				queryStringData: {},
 				toggleClassOnLoad: '',
+				closeFadeOutTime: 300,
 				selector: null
 			},
 
@@ -916,10 +918,17 @@
 			 * Close
 			 */
 			closeSlide : function () {
+				if( plugin.settings.closeFadeOutTime > 0){
+					$('#swipebox-overlay').fadeOut(  plugin.settings.closeFadeOutTime, function() { // fade out overlay
+						$(window).destroy(); 
+					});
+				}
 				$( 'html' ).removeClass( 'swipebox-html' );
 				$( 'html' ).removeClass( 'swipebox-touch' );
 				$( window ).trigger( 'resize' );
-				this.destroy();
+				if(plugin.settings.closeFadeOutTime <= 0){
+					this.destroy();
+				}
 			},
 
 			/**
