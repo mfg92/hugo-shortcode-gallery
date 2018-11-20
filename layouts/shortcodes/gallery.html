@@ -8,17 +8,22 @@
 
 {{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
 
-{{ $resizeOptions := .Get "resizeOptions" | default (.Site.Params.galleryResizeOptions | default "x150 q90 Lanczos") }}
+{{ $resizeOptions := .Get "resizeOptions" | default (.Site.Params.galleryResizeOptions | default "x150 q85 Lanczos") }}
 
 {{ $loadJQuery := .Get "loadJQuery" | default (.Site.Params.galleryLoadJQuery | default false) }}
 
+<!-- hugos image processing saves images at resources/_gen/images, if the property resourceDir
+	 is changed in hugos config.toml file the images are save <resourceDir>/_gen/images.
+	 Because it is not possible to access the value of resourceDir, users who change resourceDir also have to change
+	[params] resourceDir. -->
+{{ $thumbnailResourceDir := printf "%s%s" (.Site.Params.resourceDir | default "resources") "/_gen/images/" }}
 
 <!-- Load jquery-migrate, swipebox and justified_gallery only once per page -->
 {{ if not (.Page.Scratch.Get "galleryLoaded") }}
-  {{ .Page.Scratch.Set "galleryLoaded" true }}
+  	{{ .Page.Scratch.Set "galleryLoaded" true }}
 
 	{{ if $loadJQuery }}
-			<script src="/shortcode-gallery/jquery-3.3.1.min.js"></script>
+		<script src="/shortcode-gallery/jquery-3.3.1.min.js"></script>
 	{{ end }}
 
 	<script src="/shortcode-gallery/swipebox/js/jquery.swipebox.min.js"></script>
@@ -35,30 +40,34 @@ Ordinal: {{ .Ordinal}}
 
 {{ $galleryId := (printf "gallery_%v" .Ordinal)}}
 
-<div id="{{ $galleryId }}">
+<div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := $images }}
-		{{ $thumbnail := ($original.Resize ($resizeOptions))  }}
+		{{ $thumbnail := ($original.Resize ($resizeOptions)) }}
+		{{ $thumbnailImgData := imageConfig (printf "%s%s" $thumbnailResourceDir $thumbnail.RelPermalink) }}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
-					<img src="{{ $thumbnail.RelPermalink }}"/>
+					<img src="{{ $thumbnail.RelPermalink }}" width="{{ $thumbnailImgData.Width }}" height="{{ $thumbnailImgData.Height }}"/>
 				</a>
 		</div>
 	{{ end }}
 </div>
 
 <script>
-	if (!jQuery) {
-	    alert("jquery is not loaded");
-	}
-
-	$( document ).ready(function() {
-		$("#{{ $galleryId }}").justifiedGallery({
-			rowHeight : {{ $rowHeight }},
-			margins : {{ $margins }},
-			border : 0,
-		})
-		.on('jg.complete', function () {
-			$('.galleryImg').swipebox();
+		if (!jQuery) {
+			alert("jquery is not loaded");
+		}
+	
+		$( document ).ready(function() {
+			$("#{{ $galleryId }}").justifiedGallery({
+				rowHeight : {{ $rowHeight }},
+				margins : {{ $margins }},
+				border : 0,
+				waitThumbnailsLoad : false,
+				lastRow : 'justify',
+			})
+			.on('jg.complete', function () {
+				$('.galleryImg').swipebox();
+			});
 		});
-  	});
 </script>
+
