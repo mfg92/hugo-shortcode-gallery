@@ -47,8 +47,8 @@ Ordinal: {{ .Ordinal}}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
 					<img src="{{ $thumbnail.RelPermalink }}" 
-					width="{{ $thumbnailImgData.Width }}" height="{{ $thumbnailImgData.Height }}"
-					style="width: initial; max-width: initial;"/>
+					width="{{ $thumbnailImgData.Width }}" height="{{ $thumbnailImgData.Height }}"/>
+					<!--style="width: initial; max-width: initial;"/>-->
 				</a>
 		</div>
 	{{ end }}
@@ -64,7 +64,7 @@ Ordinal: {{ .Ordinal}}
 				rowHeight : {{ $rowHeight }},
 				margins : {{ $margins }},
 				border : 0,
-				waitThumbnailsLoad : false,
+				//waitThumbnailsLoad : false,
 				lastRow : 'justify',
 			})
 			.on('jg.complete', function () {
