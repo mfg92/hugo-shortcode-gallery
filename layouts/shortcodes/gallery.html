@@ -46,7 +46,9 @@ Ordinal: {{ .Ordinal}}
 		{{ $thumbnailImgData := imageConfig (printf "%s%s" $thumbnailResourceDir $thumbnail.RelPermalink) }}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
-					<img src="{{ $thumbnail.RelPermalink }}" width="{{ $thumbnailImgData.Width }}" height="{{ $thumbnailImgData.Height }}"/>
+					<img src="{{ $thumbnail.RelPermalink }}" 
+					width="{{ $thumbnailImgData.Width }}" height="{{ $thumbnailImgData.Height }}"
+					style="width: initial; max-width: initial;"/>
 				</a>
 		</div>
 	{{ end }}
