@@ -17,7 +17,7 @@
 				initialIndexOnArray : 0,
 				removeBarsOnMobile : true,
 				hideCloseButtonOnMobile : false,
-				hideBarsDelay : 3000,
+				hideBarsDelay : 5000,
 				videoMaxWidth : 1140,
 				vimeoColor : 'cccccc',
 				beforeOpen: null,
@@ -30,7 +30,8 @@
 				autoplayVideos: false,
 				queryStringData: {},
 				toggleClassOnLoad: '',
-				closeFadeOutTime: 300,
+				closeFadeOutTime: 500,
+				showExifAsTitle: false,
 				selector: null
 			},
 
@@ -696,6 +697,39 @@
 					$this.loadMedia( src, function() {
 						slide.removeClass( 'slide-loading' );
 						slide.html( this );
+
+						if( plugin.settings.showExifAsTitle === true ){
+							EXIF.enableXmp();
+							EXIF.getData(this[0], function() {
+								
+								//var allMetaData = EXIF.getAllTags(this);
+								//console.log(allMetaData);
+								//console.log(EXIF.getAllIptcTags(this));
+								//console.log(EXIF.pretty(this));
+
+								var techInfo = EXIF.getTag(this, "Model")
+									+ " @ "
+									+ EXIF.getTag(this, "ExposureTime").numerator
+									+ "/"
+									+ EXIF.getTag(this, "ExposureTime").denominator
+									+ " f/"
+									+ EXIF.getTag(this, "FNumber")
+									+ " "
+									+ EXIF.getTag(this, "FocalLength")
+									+ "mm ISO "
+									+ EXIF.getTag(this, "ISOSpeedRatings")
+									;
+								
+								// set the title of this element to the exif data 
+								elements[ index ].title =  techInfo;
+
+								// if this image is currently displayed show the now available title
+								var currentIndex = $( '#swipebox-slider .slide' ).index( $( '#swipebox-slider .slide.current' ) );
+								if( index == currentIndex ){
+									$this.setTitle( index );
+								}
+							});
+						}
 
 						if ( plugin.settings.afterMedia ) {
 							plugin.settings.afterMedia( index );

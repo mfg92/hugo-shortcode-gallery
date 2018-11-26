@@ -33,7 +33,7 @@ https://gohugo.io/themes/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" rowHeight="150" margins="5" resizeOptions="x300 q90 Lanczos" >}}
+{{< gallery match="images/*" rowHeight="150" margins="5" resizeOptions="x300 q90 Lanczos" showExifAsTitle="true" >}}
 ```
 
 This will generate a gallery containing all images of the folder *images*.
@@ -48,6 +48,9 @@ function. In the example above the generated thumbnails have a width of 300 pixe
 a height depending on the original aspect ratio. The JPEG image quality is 90% and the 
 scaling uses the high quality *Lanczos* filter.
 
+When the users klick on an image, a lightbox shows up displaying the klicked image in large using the whole available space.
+If the `showExifAsTitle` is set to "true", there will be a title bar showing some of the images EXIF data e.g.: "Canon EOS 600D @ 1/640 f/8 90mm ISO 400".
+
 As many websites/themes already include *jQuery*, this theme component will use the available *jQuery* lib.
 If the page does not already use *jQuery* the paramter `loadJQuery=true` must be used to 
 instruct the theme component to load the provided *jQuery* lib.
@@ -61,3 +64,10 @@ This component requieres a hugo version >= 0.48.
 The component uses (and includes) [*Justified Gallery*](http://miromannino.github.io/Justified-Gallery/)
 to render the images between the text and [*Swipebox*](http://brutaldesign.github.io/swipebox/)
 to show them fullscreen.
+
+## Troubleshooting
+
+When bigger galleries are proccesed it can be requiered to set hugos timeout property in the config.toml to a higher value:
+```
+timeout = 60000 # This is requiered for larger galleries to be build (60 sec)
+```

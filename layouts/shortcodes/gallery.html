@@ -12,6 +12,8 @@
 
 {{ $loadJQuery := .Get "loadJQuery" | default (.Site.Params.galleryLoadJQuery | default false) }}
 
+{{ $showExifAsTitle := .Get "showExifAsTitle" | default (.Site.Params.galleryShowExifAsTitle | default false) }}
+
 <!-- hugos image processing saves images at resources/_gen/images, if the property resourceDir
 	 is changed in hugos config.toml file the images are save <resourceDir>/_gen/images.
 	 Because it is not possible to access the value of resourceDir, users who change resourceDir also have to change
@@ -26,6 +28,10 @@
 		<script src="/shortcode-gallery/jquery-3.3.1.min.js"></script>
 	{{ end }}
 
+	{{ if $showExifAsTitle }}
+		<script src="/shortcode-gallery/exif-2.3.0.min.js"></script>
+	{{ end }}
+	
 	<script src="/shortcode-gallery/swipebox/js/jquery.swipebox.min.js"></script>
 	<link rel="stylesheet" href="/shortcode-gallery/swipebox/css/swipebox.min.css">
 
@@ -55,21 +61,23 @@ Ordinal: {{ .Ordinal}}
 </div>
 
 <script>
-		if (!jQuery) {
-			alert("jquery is not loaded");
-		}
-	
-		$( document ).ready(function() {
-			$("#{{ $galleryId }}").justifiedGallery({
-				rowHeight : {{ $rowHeight }},
-				margins : {{ $margins }},
-				border : 0,
-				//waitThumbnailsLoad : false,
-				lastRow : 'justify',
-			})
-			.on('jg.complete', function () {
-				$('.galleryImg').swipebox();
+	if (!jQuery) {
+		alert("jquery is not loaded");
+	}
+
+	$( document ).ready(function() {
+		$("#{{ $galleryId }}").justifiedGallery({
+			rowHeight : {{ $rowHeight }},
+			margins : {{ $margins }},
+			border : 0,
+			//waitThumbnailsLoad : false,
+			lastRow : 'justify',
+		})
+		.on('jg.complete', function () {
+			$('.galleryImg').swipebox( {
+				showExifAsTitle : {{ $showExifAsTitle | safeJS }},
 			});
 		});
+	});
 </script>
 
