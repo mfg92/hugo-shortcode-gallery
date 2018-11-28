@@ -15,7 +15,8 @@
 				useCSS : true,
 				useSVG : true,
 				initialIndexOnArray : 0,
-				removeBarsOnMobile : true,
+				removeTopBarOnMobile : false,
+				removeBottomBarOnMobile: true,
 				hideCloseButtonOnMobile : false,
 				hideBarsDelay : 5000,
 				videoMaxWidth : 1140,
@@ -185,8 +186,13 @@
 					} );
 				}
 
-				if ( isMobile && plugin.settings.removeBarsOnMobile ) {
-					$( '#swipebox-bottom-bar, #swipebox-top-bar' ).remove();
+				if ( isMobile ){
+					if( plugin.settings.removeBottomBarOnMobile ) {
+						$( '#swipebox-bottom-bar' ).remove();
+					}
+					if( plugin.settings.removeTopBarOnMobile ) {
+						$( '#swipebox-top-bar' ).remove();
+					}
 				}
 
 				$.each( elements,  function() {

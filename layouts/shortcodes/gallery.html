@@ -14,6 +14,8 @@
 
 {{ $showExifAsTitle := .Get "showExifAsTitle" | default (.Site.Params.galleryShowExifAsTitle | default false) }}
 
+{{ $justifiedGalleryParameters := .Get "justifiedGalleryParameters" | default (.Site.Params.galleryJustifiedGalleryParameters | default "") }}
+
 <!-- hugos image processing saves images at resources/_gen/images, if the property resourceDir
 	 is changed in hugos config.toml file the images are save <resourceDir>/_gen/images.
 	 Because it is not possible to access the value of resourceDir, users who change resourceDir also have to change
@@ -76,6 +78,7 @@ Ordinal: {{ .Ordinal}}
 		.on('jg.complete', function () {
 			$('.galleryImg').swipebox( {
 				showExifAsTitle : {{ $showExifAsTitle | safeJS }},
+				...{ {{ $justifiedGalleryParameters | safeJS }} }
 			});
 		});
 	});
