@@ -33,7 +33,7 @@ https://gohugo.io/themes/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" rowHeight="150" margins="5" resizeOptions="x300 q90 Lanczos" showExifAsTitle="true" >}}
+{{< gallery match="images/*" rowHeight="150" margins="5" resizeOptions="600x300 q90 Lanczos" showExifAsTitle="true" >}}
 ```
 
 This will generate a gallery containing all images of the folder *images*.
@@ -44,8 +44,8 @@ The `rowHeight` paramter determines the height of the rows that are displayed wh
 
 A thumbnail is generated using the `resizeOptions` paramter, they are handed over 
 to *Hugos* [image processing](https://gohugo.io/content-management/image-processing/) 
-function. In the example above the generated thumbnails have a width of 300 pixel and 
-a height depending on the original aspect ratio. The JPEG image quality is 90% and the 
+function using the fit method. In the example above the generated thumbnails have a width of max 300 pixel and 
+a height of max 600, the actual width and heigth depend on the original aspect ratio. The JPEG image quality is 90% and the 
 scaling uses the high quality *Lanczos* filter.
 
 When the users klick on an image, a lightbox shows up displaying the klicked image in large using the whole available space.

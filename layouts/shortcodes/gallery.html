@@ -50,7 +50,7 @@ Ordinal: {{ .Ordinal}}
 
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := $images }}
-		{{ $thumbnail := ($original.Resize ($resizeOptions)) }}
+		{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
 		{{ $thumbnailImgData := imageConfig (printf "%s%s" $thumbnailResourceDir $thumbnail.RelPermalink) }}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
