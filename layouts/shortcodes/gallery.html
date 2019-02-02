@@ -8,7 +8,7 @@
 
 {{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
 
-{{ $resizeOptions := .Get "resizeOptions" | default (.Site.Params.galleryResizeOptions | default "x150 q85 Lanczos") }}
+{{ $resizeOptions := .Get "resizeOptions" | default (.Site.Params.galleryResizeOptions | default "300x150 q85 Lanczos") }}
 
 {{ $loadJQuery := .Get "loadJQuery" | default (.Site.Params.galleryLoadJQuery | default false) }}
 
