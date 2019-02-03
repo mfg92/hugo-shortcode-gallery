@@ -16,6 +16,10 @@
 
 {{ $justifiedGalleryParameters := .Get "justifiedGalleryParameters" | default (.Site.Params.galleryJustifiedGalleryParameters | default "") }}
 
+{{ $previewType := .Get "previewType" | default (.Site.Params.galleryPreviewType | default "blur") }}
+
+{{ $embedPreview := .Get "embedPreview" | default (.Site.Params.galleryEmbedPreview | default true) }}
+
 <!-- hugos image processing saves images at resources/_gen/images, if the property resourceDir
 	 is changed in hugos config.toml file the images are save <resourceDir>/_gen/images.
 	 Because it is not possible to access the value of resourceDir, users who change resourceDir also have to change
@@ -34,6 +38,10 @@
 		<script src="/shortcode-gallery/exif-2.3.0.min.js"></script>
 	{{ end }}
 	
+	{{ if not (eq $previewType "none") }}
+		<script type="text/javascript" src="/shortcode-gallery/lazy/jquery.lazy.min.js"></script>
+	{{ end }}
+
 	<script src="/shortcode-gallery/swipebox/js/jquery.swipebox.min.js"></script>
 	<link rel="stylesheet" href="/shortcode-gallery/swipebox/css/swipebox.min.css">
 
@@ -45,18 +53,38 @@
 Ordinal increases every time this shortcode is used in a document
 Ordinal: {{ .Ordinal}}
 -->
-
 {{ $galleryId := (printf "gallery_%v" .Ordinal)}}
 
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := $images }}
 		{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
-		{{ $thumbnailImgData := imageConfig (printf "%s%s" $thumbnailResourceDir $thumbnail.RelPermalink) }}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
-					<img src="{{ $thumbnail.RelPermalink }}" 
-					width="{{ $thumbnailImgData.Width }}" height="{{ $thumbnailImgData.Height }}"/>
-					<!--style="width: initial; max-width: initial;"/>-->
+					<img
+						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
+					{{ if (eq $previewType "blur") }}
+						{{ $preview_b := ($original.Fit ("32x32 q70 box")) }}
+						style="filter: blur(25px);"
+						{{ if $embedPreview }}
+							src="data:image/jpeg;base64,{{ $preview_b.Content | base64Encode }}"
+						{{ else }}
+							src="{{ $preview_b.RelPermalink }}"
+						{{ end }}
+						class="lazy"
+						data-src="{{ $thumbnail.RelPermalink }}"
+					{{ else if (eq $previewType "color") }}
+						{{ $preview_1p := ($original.Fit ("1x1 q90 box")) }}
+						{{ if $embedPreview }}
+							src="data:image/jpeg;base64,{{ $preview_1p.Content | base64Encode }}"
+						{{ else }}
+							src="{{ $preview_1p.RelPermalink }}"
+						{{ end }}
+						class="lazy"
+						data-src="{{ $thumbnail.RelPermalink }}"
+					{{ else }}
+						src="{{ $thumbnail.RelPermalink }}"
+					{{ end }}
+						 >
 				</a>
 		</div>
 	{{ end }}
@@ -72,15 +100,29 @@ Ordinal: {{ .Ordinal}}
 			rowHeight : {{ $rowHeight }},
 			margins : {{ $margins }},
 			border : 0,
-			//waitThumbnailsLoad : false,
+			waitThumbnailsLoad : false,
 			lastRow : 'justify',
 		})
 		.on('jg.complete', function () {
-			$('.galleryImg').swipebox( {
-				showExifAsTitle : {{ $showExifAsTitle | safeJS }},
-				...{ {{ $justifiedGalleryParameters | safeJS }} }
-			});
-		});
+			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
+				// if there is laready some lowres image data laoded, then we will wait for loading´
+				// the hi-res until the justified gallery has done the layout
+				$(function() {
+					$('.lazy').Lazy({
+						afterLoad: function(element) {
+							element.css({filter: "none", transition: "filter 1.0s ease-in-out"});
+						},
+					});
+				});
+			{{ end }}
+
+			$('.galleryImg').swipebox( 
+				jQuery.extend({},
+					{ showExifAsTitle : {{ $showExifAsTitle | safeJS }} },
+					{ {{ $justifiedGalleryParameters | safeJS }} }
+				)
+			);
+		}); 
 	});
 </script>
 
