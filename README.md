@@ -37,11 +37,13 @@ https://gohugo.io/themes/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" rowHeight="150" margins="5" resizeOptions="600x300 q90 Lanczos" showExifAsTitle="true" previewType="blur" embedPreview=true >}}
+{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" resizeOptions="600x300 q90 Lanczos" showExifAsTitle="true" previewType="blur" embedPreview=true >}}
 ```
 
 This will generate a gallery containing all images of the folder *images*.
 The folder must be next to the .md file where this gallery is used in.
+
+The parameter `sortOrder` decides whether the images are sorted ascending ("asc") or decending ("desc").
 
 The `rowHeight` paramter determines the height of the rows that are displayed while the 
 `margin` paramter defines the gap between the images.
@@ -67,7 +69,7 @@ instruct the theme component to load the provided *jQuery* lib.
 
 ## Requirements
 
-This component requieres a hugo version >= 0.53.
+This component requieres a hugo version >= 0.55.
 
 ## Dependencies
 

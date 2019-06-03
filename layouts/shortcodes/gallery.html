@@ -4,6 +4,8 @@
 	{{ $images = (.Page.Resources.Match (.Get "match")) }}
 {{ end }}
 
+{{ $sortOrder := .Get "sortOrder" | default (.Site.Params.sortOrder | default "asc") }}
+
 {{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
 
 {{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
@@ -56,7 +58,7 @@ Ordinal: {{ .Ordinal}}
 {{ $galleryId := (printf "gallery_%v" .Ordinal)}}
 
 <div id="{{ $galleryId }}" class="justified-gallery">
-	{{ range $original := $images }}
+	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
 		<div>
 				<a href="{{ $original.RelPermalink }}" class="galleryImg">
