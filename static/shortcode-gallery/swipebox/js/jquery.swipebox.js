@@ -32,7 +32,6 @@
 				queryStringData: {},
 				toggleClassOnLoad: '',
 				closeFadeOutTime: 500,
-				showExifAsTitle: false,
 				selector: null
 			},
 
@@ -57,6 +56,7 @@
 							<div id="swipebox-arrows">\
 								<a id="swipebox-prev"></a>\
 								<a id="swipebox-next"></a>\
+								<div id="swipebox-description"></div>\
 							</div>\
 						</div>\
 						<a id="swipebox-close"></a>\
@@ -123,12 +123,16 @@
 					$elem.each( function() {
 
 						var title = null,
+							description = null,
 							href = null;
 
 						if ( $( this ).attr( 'title' ) ) {
 							title = $( this ).attr( 'title' );
 						}
 
+						if ( $( this ).attr( 'description' ) ) {
+							description = $( this ).attr( 'description' );
+						}
 
 						if ( $( this ).attr( 'href' ) ) {
 							href = $( this ).attr( 'href' );
@@ -136,7 +140,8 @@
 
 						elements.push( {
 							href: href,
-							title: title
+							title: title,
+							description: description
 						} );
 					} );
 
@@ -704,39 +709,6 @@
 						slide.removeClass( 'slide-loading' );
 						slide.html( this );
 
-						if( plugin.settings.showExifAsTitle === true ){
-							EXIF.enableXmp();
-							EXIF.getData(this[0], function() {
-								
-								//var allMetaData = EXIF.getAllTags(this);
-								//console.log(allMetaData);
-								//console.log(EXIF.getAllIptcTags(this));
-								//console.log(EXIF.pretty(this));
-
-								var techInfo = EXIF.getTag(this, "Model")
-									+ " @ "
-									+ EXIF.getTag(this, "ExposureTime").numerator
-									+ "/"
-									+ EXIF.getTag(this, "ExposureTime").denominator
-									+ " f/"
-									+ EXIF.getTag(this, "FNumber")
-									+ " "
-									+ EXIF.getTag(this, "FocalLength")
-									+ "mm ISO "
-									+ EXIF.getTag(this, "ISOSpeedRatings")
-									;
-								
-								// set the title of this element to the exif data 
-								elements[ index ].title =  techInfo;
-
-								// if this image is currently displayed show the now available title
-								var currentIndex = $( '#swipebox-slider .slide' ).index( $( '#swipebox-slider .slide.current' ) );
-								if( index == currentIndex ){
-									$this.setTitle( index );
-								}
-							});
-						}
-
 						if ( plugin.settings.afterMedia ) {
 							plugin.settings.afterMedia( index );
 						}
@@ -755,20 +727,26 @@
 			 * Set link title attribute as caption
 			 */
 			setTitle : function ( index ) {
-				var title = null;
+				var title = null,
+					description = null;
 
 				$( '#swipebox-title' ).empty();
 
 				if ( elements[ index ] !== undefined ) {
 					title = elements[ index ].title;
+					description = elements[ index ].description;
 				}
 
+				
 				if ( title ) {
 					$( '#swipebox-top-bar' ).show();
 					$( '#swipebox-title' ).append( title );
 				} else {
 					$( '#swipebox-top-bar' ).hide();
 				}
+
+				$( '#swipebox-description' ).empty();
+				$( '#swipebox-description' ).append( description );
 			},
 
 			/**

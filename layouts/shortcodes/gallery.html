@@ -14,7 +14,7 @@
 
 {{ $loadJQuery := .Get "loadJQuery" | default (.Site.Params.galleryLoadJQuery | default false) }}
 
-{{ $showExifAsTitle := .Get "showExifAsTitle" | default (.Site.Params.galleryShowExifAsTitle | default false) }}
+{{ $showExif := .Get "showExif" | default (.Site.Params.galleryShowExif | default false) }}
 
 {{ $justifiedGalleryParameters := .Get "justifiedGalleryParameters" | default (.Site.Params.galleryJustifiedGalleryParameters | default "") }}
 
@@ -28,16 +28,12 @@
 	[params] resourceDir. -->
 {{ $thumbnailResourceDir := printf "%s%s" (.Site.Params.resourceDir | default "resources") "/_gen/images/" }}
 
-<!-- Load jquery-migrate, swipebox and justified_gallery only once per page -->
+<!-- Load jquery, jquery-lazy, swipebox and justified_gallery only once per page -->
 {{ if not (.Page.Scratch.Get "galleryLoaded") }}
   	{{ .Page.Scratch.Set "galleryLoaded" true }}
 
 	{{ if $loadJQuery }}
 		<script src="/shortcode-gallery/jquery-3.3.1.min.js"></script>
-	{{ end }}
-
-	{{ if $showExifAsTitle }}
-		<script src="/shortcode-gallery/exif-2.3.0.min.js"></script>
 	{{ end }}
 	
 	{{ if not (eq $previewType "none") }}
@@ -61,32 +57,49 @@ Ordinal: {{ .Ordinal}}
 	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
 		<div>
-				<a href="{{ $original.RelPermalink }}" class="galleryImg">
-					<img
-						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
-					{{ if (eq $previewType "blur") }}
-						{{ $preview_b := ($original.Fit ("32x32 q70 box")) }}
-						style="filter: blur(25px);"
-						{{ if $embedPreview }}
-							src="data:image/jpeg;base64,{{ $preview_b.Content | base64Encode }}"
-						{{ else }}
-							src="{{ $preview_b.RelPermalink }}"
+				<a href="{{ $original.RelPermalink }}" 
+					class="galleryImg"
+					{{ if in "jpg tiff" $original.MediaType.SubType }}
+						{{ with $original.Exif }}
+							title="{{ .Tags.ImageDescription }}"
+							{{ if $showExif }}
+								description="{{ .Tags.Model }} + {{ .Tags.LensModel }}<br/>{{ .Tags.FocalLength }}mm f/{{ .Tags.FNumber }} {{ .Tags.ExposureTime }}sec ISO {{ .Tags.ISOSpeedRatings }}"
+							{{ end }}
 						{{ end }}
-						class="lazy"
-						data-src="{{ $thumbnail.RelPermalink }}"
-					{{ else if (eq $previewType "color") }}
-						{{ $preview_1p := ($original.Fit ("1x1 q90 box")) }}
-						{{ if $embedPreview }}
-							src="data:image/jpeg;base64,{{ $preview_1p.Content | base64Encode }}"
-						{{ else }}
-							src="{{ $preview_1p.RelPermalink }}"
-						{{ end }}
-						class="lazy"
-						data-src="{{ $thumbnail.RelPermalink }}"
-					{{ else }}
-						src="{{ $thumbnail.RelPermalink }}"
 					{{ end }}
-						 >
+					>
+					<img			
+						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
+
+						{{ if (eq $previewType "blur") }}
+							{{ $preview_b := ($original.Fit ("32x32 q70 box")) }}
+							style="filter: blur(25px);"
+							{{ if $embedPreview }}
+								src="data:image/jpeg;base64,{{ $preview_b.Content | base64Encode }}"
+							{{ else }}
+								src="{{ $preview_b.RelPermalink }}"
+							{{ end }}
+							class="lazy"
+							data-src="{{ $thumbnail.RelPermalink }}"
+						{{ else if (eq $previewType "color") }}
+							{{ $preview_1p := ($original.Fit ("1x1 q90 box")) }}
+							{{ if $embedPreview }}
+								src="data:image/jpeg;base64,{{ $preview_1p.Content | base64Encode }}"
+							{{ else }}
+								src="{{ $preview_1p.RelPermalink }}"
+							{{ end }}
+							class="lazy"
+							data-src="{{ $thumbnail.RelPermalink }}"
+						{{ else }}
+							src="{{ $thumbnail.RelPermalink }}"
+						{{ end }}
+
+						{{ if in "jpg tiff" $original.MediaType.SubType }}
+							{{ with $original.Exif }}
+								alt="{{ .ImageDescription}}"
+							{{ end }}
+						{{ end }}
+					>
 				</a>
 		</div>
 	{{ end }}
@@ -104,6 +117,7 @@ Ordinal: {{ .Ordinal}}
 			border : 0,
 			waitThumbnailsLoad : false,
 			lastRow : 'justify',
+			captions : false,
 		})
 		.on('jg.complete', function () {
 			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
@@ -120,7 +134,6 @@ Ordinal: {{ .Ordinal}}
 
 			$('.galleryImg').swipebox( 
 				jQuery.extend({},
-					{ showExifAsTitle : {{ $showExifAsTitle | safeJS }} },
 					{ {{ $justifiedGalleryParameters | safeJS }} }
 				)
 			);
