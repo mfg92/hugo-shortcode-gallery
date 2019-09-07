@@ -56,7 +56,12 @@ scaling uses the high quality *Lanczos* filter.
 
 When the users klicks on an image, a lightbox shows up displaying the klicked image in large using the whole available space.
 If the image contains a title or description there will be a top bar displaying that.
-If the `showExif` option is set to "true", some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500".
+If the `showExif` option is set to "true", some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500". 
+The EXIF display will only work if you add following lines to your *config.toml*:
+```
+[imaging.exif]
+    includeFields = ".*"
+```
 
 If `previewType` is set to "blur" (or "color"), a very low resolution image (or a single pixel image) will be loaded for every image in the gallery first.
 The hight resolution thumbnail images (see `resizeOptions`) will only be loaded if they are on the currently visible part of the page (or close to it).
@@ -80,7 +85,7 @@ to show them fullscreen.
 
 ## Troubleshooting
 
-When bigger galleries are processed it can be required to set hugo's timeout property in the config.toml to a higher value:
+When bigger galleries are processed it can be required to set hugo's timeout property in the *config.toml* to a higher value:
 ```
 timeout = 60000 # This is required for larger galleries to be build (60 sec)
 ```
