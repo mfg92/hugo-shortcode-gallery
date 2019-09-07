@@ -96,7 +96,7 @@ Ordinal: {{ .Ordinal}}
 
 						{{ if in "jpg tiff" $original.MediaType.SubType }}
 							{{ with $original.Exif }}
-								alt="{{ .ImageDescription}}"
+								alt="{{ .Tags.ImageDescription}}"
 							{{ end }}
 						{{ end }}
 					>
