@@ -4,7 +4,7 @@
 	{{ $images = (.Page.Resources.Match (.Get "match")) }}
 {{ end }}
 
-{{ $sortOrder := .Get "sortOrder" | default (.Site.Params.sortOrder | default "asc") }}
+{{ $sortOrder := .Get "sortOrder" | default (.Site.Params.gallerySortOrder | default "asc") }}
 
 {{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
 
@@ -21,6 +21,8 @@
 {{ $previewType := .Get "previewType" | default (.Site.Params.galleryPreviewType | default "blur") }}
 
 {{ $embedPreview := .Get "embedPreview" | default (.Site.Params.galleryEmbedPreview | default true) }}
+
+{{ $thumbnailHoverEffect := .Get "thumbnailHoverEffect" | default (.Site.Params.galleryThumbnailHoverEffect | default "none") }}
 
 <!-- hugos image processing saves images at resources/_gen/images, if the property resourceDir
 	 is changed in hugos config.toml file the images are save <resourceDir>/_gen/images.
@@ -45,6 +47,18 @@
 
 	<script src="/shortcode-gallery/justified_gallery/jquery.justifiedGallery.min.js"></script>
 	<link rel="stylesheet" href="/shortcode-gallery/justified_gallery/justifiedGallery.min.css"/>
+{{ end }}
+
+{{ if  (eq $thumbnailHoverEffect "enlarge") }}
+	<style>
+		.jg-entry img {
+			transition: transform .25s ease-in-out !important;;
+		}
+
+		.jg-entry img:hover {
+			transform: scale(1.1);
+		}
+	</style>
 {{ end }}
 
 <!--
