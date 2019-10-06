@@ -29,7 +29,7 @@ theme = ["your-main-theme", "hugo-shortcode-gallery"]
 ```
 
 To read about hugo's theme components and how to use them have a look at 
-https://gohugo.io/themes/theme-components/.
+https://gohugo.io/hugo-modules/theme-components/.
 
 
 ## Usage Example
@@ -37,10 +37,10 @@ https://gohugo.io/themes/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" resizeOptions="600x300 q90 Lanczos" showExif="true" previewType="blur" embedPreview=true >}}
+{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" resizeOptions="600x300 q90 Lanczos" showExif="true" previewType="blur" embedPreview="true" >}}
 ```
 
-This will generate a gallery containing all images of the folder *images*.
+This shortcode will generate a gallery containing all images of the folder *images*.
 The folder must be next to the .md file where this gallery is used in.
 
 The parameter `sortOrder` decides whether the images are sorted ascending ("asc") or decending ("desc").
