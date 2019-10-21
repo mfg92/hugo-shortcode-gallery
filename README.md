@@ -80,7 +80,7 @@ All settings can be done globally in the site's *config.toml*, for that the pref
 
 ## Requirements
 
-This component requires a hugo version >= 0.58.
+This component requires a hugo version >= 0.59.
 
 ## Dependencies
 
