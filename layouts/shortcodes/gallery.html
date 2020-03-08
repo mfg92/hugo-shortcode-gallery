@@ -86,7 +86,7 @@ Ordinal: {{ .Ordinal}}
 						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
 
 						{{ if (eq $previewType "blur") }}
-							{{ $preview_b := ($original.Fit ("32x32 q70 box")) }}
+							{{ $preview_b := ($original.Fit ("32x32 q70 box jpg")) }}
 							style="filter: blur(25px);"
 							{{ if $embedPreview }}
 								src="data:image/jpeg;base64,{{ $preview_b.Content | base64Encode }}"
@@ -98,7 +98,7 @@ Ordinal: {{ .Ordinal}}
 						{{ else if (eq $previewType "color") }}
 							{{ $preview_1p := ($original.Fit ("1x1 box png")) }}
 							{{ if $embedPreview }}
-								src="data:image/jpeg;base64,{{ $preview_1p.Content | base64Encode }}"
+								src="data:image/png;base64,{{ $preview_1p.Content | base64Encode }}"
 							{{ else }}
 								src="{{ $preview_1p.RelPermalink }}"
 							{{ end }}
@@ -110,7 +110,7 @@ Ordinal: {{ .Ordinal}}
 
 						{{ if in "jpg tiff" $original.MediaType.SubType }}
 							{{ with $original.Exif }}
-								alt="{{ .Tags.ImageDescription}}"
+								alt="{{ .Tags.ImageDescription }}"
 							{{ end }}
 						{{ end }}
 					>
