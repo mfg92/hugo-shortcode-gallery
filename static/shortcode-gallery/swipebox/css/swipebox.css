@@ -128,6 +128,7 @@ html.swipebox-html.swipebox-touch {
 }
 
 #swipebox-description {
+    color: white !important;
     display: flex;
     align-items: center;
     justify-content: center;
