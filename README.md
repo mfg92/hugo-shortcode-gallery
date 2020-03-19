@@ -41,7 +41,16 @@ Here is an usage example:
 ```
 
 This shortcode will generate a gallery containing all images of the folder *images*.
-The folder must be next to the .md file where this gallery is used in.
+The folder must be next to the .md file where this gallery is used in. This uses [page bundles](https://gohugo.io/content-management/page-bundles/)
+so the directory layout should look like this:
+
+```
+new-post-name/
+    index.md
+    images/
+        DSC_0001.jpg
+        DSC_0002.jpg
+```
 
 The parameter `sortOrder` decides whether the images are sorted ascending ("asc") or decending ("desc").
 

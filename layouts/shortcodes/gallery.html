@@ -73,7 +73,7 @@ Ordinal: {{ .Ordinal}}
 		<div>
 				<a href="{{ $original.RelPermalink }}" 
 					class="galleryImg"
-					{{ if in "jpg tiff" $original.MediaType.SubType }}
+					{{ if in "jpg jpeg tiff" $original.MediaType.SubType }}
 						{{ with $original.Exif }}
 							title="{{ .Tags.ImageDescription }}"
 							{{ if $showExif }}
@@ -108,7 +108,7 @@ Ordinal: {{ .Ordinal}}
 							src="{{ $thumbnail.RelPermalink }}"
 						{{ end }}
 
-						{{ if in "jpg tiff" $original.MediaType.SubType }}
+						{{ if in "jpg jpeg tiff" $original.MediaType.SubType }}
 							{{ with $original.Exif }}
 								alt="{{ .Tags.ImageDescription }}"
 							{{ end }}
