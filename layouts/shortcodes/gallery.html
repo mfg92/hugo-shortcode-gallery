@@ -1,3 +1,4 @@
+{{ $currentPage := . }}
 
 {{ $images := (.Page.Resources.ByType "image") }}
 {{ if .Get "match"}}
@@ -67,18 +68,39 @@ Ordinal: {{ .Ordinal}}
 -->
 {{ $galleryId := (printf "gallery_%v" .Ordinal)}}
 
+
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
-		{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
-		<div>
+		{{ if eq $original.ResourceType "image" }}
+			{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
+
+			{{ $metaFileName := print $original.Name ".meta"}}
+			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
+			{{ if $metadata }}
+				{{ $metadata = $metadata.Content }}
+				{{ $metadata = $metadata | unmarshal }}
+			{{ else }}
+				{{ $metadata = dict }}
+			{{ end }}
+
+			{{/* If the image has exif informations, those are merged together with the metadata from the file */}}
+			{{ if in "jpg jpeg tiff" $original.MediaType.SubType }}
+				{{ with $original.Exif }}
+					{{ $metadata = merge .Tags $metadata }}
+				{{ end }}
+			{{ end }}
+
+
+			<div>
 				<a href="{{ $original.RelPermalink }}" 
 					class="galleryImg"
-					{{ if in "jpg jpeg tiff" $original.MediaType.SubType }}
-						{{ with $original.Exif }}
-							title="{{ .Tags.ImageDescription }}"
-							{{ if $showExif }}
-								description="{{ .Tags.Model }} + {{ .Tags.LensModel }}<br/>{{ .Tags.FocalLength }}mm f/{{ .Tags.FNumber }} {{ .Tags.ExposureTime }}sec ISO {{ .Tags.ISOSpeedRatings }}"
-							{{ end }}
+					{{ with $metadata }}
+						{{ if .ImageDescription }}
+							title="{{ .ImageDescription }}"
+						{{ end }}
+
+						{{ if $showExif }}
+							description="{{ .Model }} + {{ .LensModel }}<br/>{{ .FocalLength }}mm f/{{ .FNumber }} {{ .ExposureTime }}sec ISO {{ .ISOSpeedRatings }}"
 						{{ end }}
 					{{ end }}
 					>
@@ -108,14 +130,15 @@ Ordinal: {{ .Ordinal}}
 							src="{{ $thumbnail.RelPermalink }}"
 						{{ end }}
 
-						{{ if in "jpg jpeg tiff" $original.MediaType.SubType }}
-							{{ with $original.Exif }}
-								alt="{{ .Tags.ImageDescription }}"
+						{{ with $metadata }}
+							{{ if .ImageDescription }}
+								alt="{{ .ImageDescription }}"
 							{{ end }}
 						{{ end }}
 					>
 				</a>
-		</div>
+			</div>
+		{{ end }}
 	{{ end }}
 </div>
 
