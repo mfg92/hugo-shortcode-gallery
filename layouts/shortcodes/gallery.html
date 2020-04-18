@@ -148,17 +148,23 @@ Ordinal: {{ .Ordinal}}
 	}
 
 	$( document ).ready(function() {
-		$("#{{ $galleryId }}").justifiedGallery({
+		const gallery = $("#{{ $galleryId }}");
+		
+		gallery.justifiedGallery({
 			rowHeight : {{ $rowHeight }},
 			margins : {{ $margins }},
 			border : 0,
 			waitThumbnailsLoad : false,
 			lastRow : 'justify',
 			captions : false,
-		})
-		.on('jg.complete', function () {
+		});
+
+		// the instance of swipebox, it will be set once justifiedGallery is initialized
+		let swipeboxInstance = null;
+
+		gallery.on('jg.complete', function () {
 			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
-				// if there is laready some lowres image data laoded, then we will wait for loading´
+				// if there is already some low resolution image data loaded, then we will wait for loading´
 				// the hi-res until the justified gallery has done the layout
 				$(function() {
 					$('.lazy').Lazy({
@@ -169,12 +175,12 @@ Ordinal: {{ .Ordinal}}
 				});
 			{{ end }}
 
-			$('.galleryImg').swipebox( 
+			swipeboxInstance = $('.galleryImg').swipebox(
 				jQuery.extend({},
 					{ {{ $justifiedGalleryParameters | safeJS }} }
 				)
 			);
-		}); 
+		});
 	});
 </script>
 
