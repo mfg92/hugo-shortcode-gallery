@@ -55,8 +55,8 @@
 	<link rel="stylesheet" href="/shortcode-gallery/justified_gallery/justifiedGallery.min.css"/>
 {{ end }}
 
-{{ if  (eq $thumbnailHoverEffect "enlarge") }}
-	<style>
+<style>
+	{{ if  (eq $thumbnailHoverEffect "enlarge") }}
 		.jg-entry img {
 			transition: transform .25s ease-in-out !important;;
 		}
@@ -64,8 +64,19 @@
 		.jg-entry img:hover {
 			transform: scale(1.1);
 		}
-	</style>
-{{ end }}
+	{{ end }}
+
+	{{ if not (eq $filterOptions "[]")  }}
+		/* make 10px space between the button(filter options) in the filter bar */
+		.justified-gallery-filterbar > * {
+				margin-left: 10px;
+		}
+
+		.justified-gallery-filterbar > *:first-child {
+				margin-left: 0;
+		}
+	{{ end }}
+</style>
 
 <!--
 Ordinal increases every time this shortcode is used in a document
