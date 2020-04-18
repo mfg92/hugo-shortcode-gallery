@@ -4,6 +4,8 @@
 	https://github.com/brutaldesign/swipebox/pull/324
 	https://github.com/brutaldesign/swipebox/pull/298
 	https://github.com/brutaldesign/swipebox/pull/287
+	and issue
+	https://github.com/brutaldesign/swipebox/issues/243
 */
 ;( function ( window, document, $, undefined ) {
 
@@ -151,6 +153,15 @@
 					ui.target = $( event.target );
 					ui.init( index );
 				} );
+			}
+		};
+
+		// https://github.com/brutaldesign/swipebox/issues/243
+		plugin.refresh = function() {
+			if (!$.isArray(elem)) {
+				ui.destroy();
+				$elem = $(selector);
+				ui.actions();
 			}
 		};
 
