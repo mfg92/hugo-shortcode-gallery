@@ -5,6 +5,11 @@
 	{{ $images = (.Page.Resources.Match (.Get "match")) }}
 {{ end }}
 
+{{ $filterOptions := .Get "filterOptions" | default (.Site.Params.galleryFilterOptions | default "[]") }}
+{{ if not $filterOptions }}
+	{{ $filterOptions = "[]" }}
+{{ end }}
+
 {{ $sortOrder := .Get "sortOrder" | default (.Site.Params.gallerySortOrder | default "asc") }}
 
 {{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
@@ -102,6 +107,11 @@ Ordinal: {{ .Ordinal}}
 						{{ if $showExif }}
 							description="{{ .Model }} + {{ .LensModel }}<br/>{{ .FocalLength }}mm f/{{ .FNumber }} {{ .ExposureTime }}sec ISO {{ .ISOSpeedRatings }}"
 						{{ end }}
+
+						{{ if not (eq $filterOptions "[]")  }}
+							{{/* only include tags till the filter mechanism (in JS at the end of the file) is limited to tags */}}
+							data-meta="{{ (dict "Tags" $metadata.Tags) | jsonify }}"
+						{{ end }}
 					{{ end }}
 					>
 					<img			
@@ -181,6 +191,63 @@ Ordinal: {{ .Ordinal}}
 				)
 			);
 		});
+
+		// only include JS code for filter options if there at least one filter option
+		{{ if not (eq $filterOptions "[]") }}
+			// this funnction returns a function that can be used by justifiedGallery for filtering images
+			function createTagFilter(tagsRegexString) {
+				const tagsRegex = RegExp(tagsRegexString);
+				return function (entry, index, array) {
+						//let title = $(entry).find("a").attr("title");
+						let meta = $(entry).find("a").attr("data-meta");
+						meta = meta ? JSON.parse(meta) : {};
+						
+						let tags = meta.Tags;
+						tags = tags ? tags : [];
+						
+						//console.log("title: ", title);
+						//console.log("tags: ", tags);
+
+						const include = tags.some(tag => tagsRegex.test(tag));
+
+						// only those images visible in justified gallery should be displayed
+						// in swipebox (only <a> with class galleryImg are displayed in swipebox)
+						if(include) {
+							$(entry).find("a").addClass("galleryImg");
+						} else {
+							$(entry).find("a").removeClass("galleryImg");
+						}
+
+						return include;
+					}
+			};
+
+			const filterOptions = {{ $filterOptions | safeJS }};
+			
+			// insert a div for inserting filter buttons before the gallery
+			const filterbar = $("<div class='justified-gallery-filterbar'/>");
+			gallery.before(filterbar);
+	
+			let first = true;
+			// create a button for each filter entry 
+			filterOptions.forEach(tagFilter => {
+				const filterButton = $("<button/>");
+				filterButton.text(tagFilter.label);
+				filterButton.click(function () {
+					gallery.justifiedGallery({filter : createTagFilter(tagFilter.tags)});
+					// remove select class from all other selt
+					filterbar.find('.selected').removeClass('selected');
+					filterButton.addClass("selected");
+					//swipeboxInstance.refresh();
+				});
+				filterbar.append(filterButton);
+
+				if(first) {
+					filterButton.trigger("click");
+				}
+				first = false;
+			});
+		{{ end }}
 	});
 </script>
 
