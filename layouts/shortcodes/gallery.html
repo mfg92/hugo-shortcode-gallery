@@ -67,13 +67,15 @@
 	{{ end }}
 
 	{{ if not (eq $filterOptions "[]")  }}
-		/* make 10px space between the button(filter options) in the filter bar */
-		.justified-gallery-filterbar > * {
-				margin-left: 10px;
+		/* make 5px space between the button(filter options) in the filter bar */
+		.justified-gallery-filterbar {
+			margin-top: -5px;
+			margin-left: -5px;
 		}
 
-		.justified-gallery-filterbar > *:first-child {
-				margin-left: 0;
+		.justified-gallery-filterbar > * {
+			margin-top: 5px;
+			margin-left: 5px;
 		}
 	{{ end }}
 </style>
