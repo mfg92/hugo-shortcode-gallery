@@ -141,7 +141,7 @@ Ordinal: {{ .Ordinal}}
 							class="lazy"
 							data-src="{{ $thumbnail.RelPermalink }}"
 						{{ else if (eq $previewType "color") }}
-							{{ $preview_1p := ($original.Fit ("1x1 box png")) }}
+							{{ $preview_1p := ($original.Resize ("1x1 box png")) }}
 							{{ if $embedPreview }}
 								src="data:image/png;base64,{{ $preview_1p.Content | base64Encode }}"
 							{{ else }}
