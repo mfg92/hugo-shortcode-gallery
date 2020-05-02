@@ -7,6 +7,7 @@
 	and issue
 	https://github.com/brutaldesign/swipebox/issues/243
 */
+"use strict";
 ;( function ( window, document, $, undefined ) {
 
 	$.swipebox = function( elem, options ) {
@@ -949,8 +950,8 @@
 			closeSlide : function () {
 				if( plugin.settings.closeFadeOutTime > 0){
 					$('#swipebox-overlay').fadeOut(  plugin.settings.closeFadeOutTime, function() { // fade out overlay
-						$(window).destroy(); 
-					});
+						this.destroy(); 
+					}.bind(this));
 				}
 				$( 'html' ).removeClass( 'swipebox-html' );
 				$( 'html' ).removeClass( 'swipebox-touch' );
