@@ -195,9 +195,9 @@
 
 				$( 'body' ).append( html );
 
-				if ( supportSVG && plugin.settings.useSVG === true ) {
+				if ( !supportSVG || plugin.settings.useSVG === false ) {
 					bg = $( '#swipebox-close' ).css( 'background-image' );
-					bg = bg.replace( 'png', 'svg' );
+					bg = bg.replace( 'svg', 'png' );
 					$( '#swipebox-prev, #swipebox-next, #swipebox-close' ).css( {
 						'background-image' : bg
 					} );
