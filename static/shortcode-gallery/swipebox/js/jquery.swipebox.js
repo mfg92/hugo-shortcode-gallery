@@ -133,8 +133,8 @@
 							title = $( this ).attr( 'title' );
 						}
 
-						if ( $( this ).attr( 'description' ) ) {
-							description = $( this ).attr( 'description' );
+						if ( $( this ).data( 'description' ) ) {
+							description = $( this ).data( 'description' );
 						}
 
 						if ( $( this ).attr( 'href' ) ) {
