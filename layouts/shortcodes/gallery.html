@@ -45,7 +45,7 @@
 	{{ end }}
 	
 	{{ if not (eq $previewType "none") }}
-		<script type="text/javascript" src="/shortcode-gallery/lazy/jquery.lazy.min.js"></script>
+		<script src="/shortcode-gallery/lazy/jquery.lazy.min.js"></script>
 	{{ end }}
 
 	<script src="/shortcode-gallery/swipebox/js/jquery.swipebox.min.js"></script>
@@ -58,7 +58,7 @@
 <style>
 	{{ if  (eq $thumbnailHoverEffect "enlarge") }}
 		.jg-entry img {
-			transition: transform .25s ease-in-out !important;;
+			transition: transform .25s ease-in-out !important;
 		}
 
 		.jg-entry img:hover {
