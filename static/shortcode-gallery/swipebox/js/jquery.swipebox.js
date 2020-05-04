@@ -195,12 +195,9 @@
 
 				$( 'body' ).append( html );
 
-				if ( !supportSVG || plugin.settings.useSVG === false ) {
-					bg = $( '#swipebox-close' ).css( 'background-image' );
-					bg = bg.replace( 'svg', 'png' );
-					$( '#swipebox-prev, #swipebox-next, #swipebox-close' ).css( {
-						'background-image' : bg
-					} );
+				if ( supportSVG && plugin.settings.useSVG === true ) {
+					$( '#swipebox-overlay' ).addClass("useSvg");
+				}
 				}
 
 				if ( isMobile ){
