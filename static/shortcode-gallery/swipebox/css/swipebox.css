@@ -91,9 +91,56 @@ html.swipebox-html.swipebox-touch {
     left: 0;
 }
 
-#swipebox-slider .slide-loading {
+/*
+ *  Non-css loading animation using an animated GIF
+ */
+#swipebox-overlay:not(.useCssLoadingAnimation) #swipebox-slider .slide-loading {
     background: url(../img/loader.gif) no-repeat center center;
 }
+
+/*
+ * Styling for loading-animation-wrapper and fade in animation when the corrsepsong slide get visible (= is current slide)
+ */
+#swipebox-slider .loading-animation-wrapper {
+    position: absolute;
+    width: 100%;
+}
+
+#swipebox-slider .slide.current .loading-animation-wrapper {
+    animation: loader-fadein ease-in 2s;
+}
+
+@keyframes loader-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/*
+ * The loading animation.
+ * This was extracted from here https://github.com/maxbeier/text-spinners/blob/master/spinners.css
+ * and afterwards modified.
+ */
+.loading-animation-wrapper .loading {
+    display: inline-block;
+    overflow: hidden;
+    height: 1.3em;
+    margin-top: -0.3em;
+    line-height: 1.5em;
+    vertical-align: text-bottom;
+    font-size: 40px;
+}
+  
+.loading-animation-wrapper .loading::after {
+    display: inline-table;
+    white-space: pre;
+    text-align: left;
+    content: "◇◇◇\A◈◇◇\A◇◈◇\A◇◇◈";
+    animation: loader-spin4 1s steps(4) infinite;
+}
+
+@keyframes loader-spin4  {to { transform: translateY( -6.0em); } }
+
+
 
 #swipebox-bottom-bar,
 #swipebox-top-bar {

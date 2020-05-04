@@ -16,6 +16,7 @@
 		var ui,
 			defaults = {
 				useCSS : true,
+				useCssLoadingAnimation: true,
 				useSVG : true,
 				initialIndexOnArray : 0,
 				removeTopBarOnMobile : false,
@@ -198,6 +199,9 @@
 				if ( supportSVG && plugin.settings.useSVG === true ) {
 					$( '#swipebox-overlay' ).addClass("useSvg");
 				}
+
+				if ( this.doCssLoadingAnimation() ) {
+					$( '#swipebox-overlay' ).addClass("useCssLoadingAnimation");
 				}
 
 				if ( isMobile ){
@@ -299,6 +303,16 @@
 					return true;
 				}
 			},
+
+			/**
+			 * Check if the CSS loading animation is allowed (options + devicesupport)
+			 */
+			doCssLoadingAnimation : function () {
+				if ( plugin.settings.useCssLoadingAnimation && this.supportTransition() ) {
+					return true;
+				}
+			},
+			
 
 			/**
 			 * Touch navigation
@@ -714,6 +728,14 @@
 
 				if ( ! $this.isVideo( src ) ) {
 					slide.addClass( 'slide-loading' );
+					if( $this.doCssLoadingAnimation() ){
+						const loadingHtml = $('\
+						<div class="loading-animation-wrapper">\
+							<span class="loading"></span>\
+						</div>');
+						slide.append(loadingHtml);
+					}
+					
 					$this.loadMedia( src, function() {
 						slide.removeClass( 'slide-loading' );
 						slide.html( this );
