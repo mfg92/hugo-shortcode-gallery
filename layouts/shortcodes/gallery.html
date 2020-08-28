@@ -172,13 +172,14 @@ Ordinal: {{ .Ordinal}}
 
 	$( document ).ready(function() {
 		const gallery = $("#{{ $galleryId }}");
-		
+		{{ $lastRowJustification := .Get "lastRow" | default (.Site.Params.galleryLastRow | default "justify") }}
+
 		gallery.justifiedGallery({
 			rowHeight : {{ $rowHeight }},
 			margins : {{ $margins }},
 			border : 0,
 			waitThumbnailsLoad : false,
-			lastRow : 'justify',
+			lastRow : {{ $lastRowJustification }},
 			captions : false,
 		});
 

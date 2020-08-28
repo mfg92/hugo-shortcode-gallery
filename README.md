@@ -54,13 +54,13 @@ new-post-name/
 
 The parameter `sortOrder` decides whether the images are sorted ascending ("asc") or decending ("desc").
 
-The `rowHeight` parameter determines the height of the rows that are displayed while the 
+The `rowHeight` parameter determines the height of the rows that are displayed while the
 `margin` parameter defines the gap between the images.
 
-A thumbnail is generated using the `resizeOptions` parameter, they are handed over 
-to *Hugos* [image processing](https://gohugo.io/content-management/image-processing/) 
-function using the fit method. In the example above the generated thumbnails have a width of max 300 pixel and 
-a height of max 600, the actual width and heigth depend on the original aspect ratio. The JPEG image quality is 90% and the 
+A thumbnail is generated using the `resizeOptions` parameter, they are handed over
+to *Hugo's* [image processing](https://gohugo.io/content-management/image-processing/)
+function using the fit method. In the example above, the generated thumbnails have a width of max 300 pixel and
+a height of max 600, the actual width and heigth depend on the original aspect ratio. The JPEG image quality is 90% and the
 scaling uses the high quality *Lanczos* filter.
 
 If `previewType` is set to "blur" (or "color"), a very low resolution image (or a single pixel image) will be loaded for every image in the gallery first.
@@ -72,9 +72,11 @@ Enable `embedPreview` to let hugo embed the tiny preview image directly in the p
 The setting `thumbnailHoverEffect` configures what should happen when the mouse hovers above a thumbnail in the gallery.
 It defaults to "none", but it can be set to "enlarge", in that case the image is scaled up (x1.1) in a short smooth animation.
 
+The setting `lastRow` configures the justification of the last row of the grid. When set to "justify", the entire grid including the last row will be fully-justified, right and left. This parameter respects all of the `lastRow` options of Justified Gallery, including "nojustify" and "hide".
+
 When the users klicks on an image, a lightbox shows up displaying the klicked image in large using the whole available space.
 If the image contains a title or description there will be a top bar displaying that.
-If the `showExif` option is set to "true", some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500". 
+If the `showExif` option is set to "true", some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500".
 The EXIF display will only work if you add following lines to your *config.toml*:
 ```
 [imaging.exif]
@@ -82,7 +84,7 @@ The EXIF display will only work if you add following lines to your *config.toml*
 ```
 
 As many websites/themes already include *jQuery*, this theme component will use the available *jQuery* lib.
-If the page does not already use *jQuery* the parameter `loadJQuery=true` must be used to 
+If the page does not already use *jQuery* the parameter `loadJQuery=true` must be used to
 instruct the theme component to load the provided *jQuery* lib.
 
 All settings can be done globally in the site's *config.toml*, for that the prefix `gallery` has to be used. E.g. `galleryLoadJQuery` instead of `loadJQuery`.
