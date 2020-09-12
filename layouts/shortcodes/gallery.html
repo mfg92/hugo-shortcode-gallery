@@ -41,7 +41,7 @@
   	{{ .Page.Scratch.Set "galleryLoaded" true }}
 
 	{{ if $loadJQuery }}
-		<script src="/shortcode-gallery/jquery-3.5.0.min.js"></script>
+		<script src="/shortcode-gallery/jquery-3.5.1.min.js"></script>
 	{{ end }}
 	
 	{{ if not (eq $previewType "none") }}
@@ -208,7 +208,7 @@ Ordinal: {{ .Ordinal}}
 
 		// only include JS code for filter options if there at least one filter option
 		{{ if not (eq $filterOptions "[]") }}
-			// this funnction returns a function that can be used by justifiedGallery for filtering images
+			// this function returns a function that can be used by justifiedGallery for filtering images
 			function createTagFilter(tagsRegexString) {
 				const tagsRegex = RegExp(tagsRegexString);
 				return function (entry, index, array) {
