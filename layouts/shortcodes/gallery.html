@@ -69,13 +69,47 @@
 	{{ if not (eq $filterOptions "[]")  }}
 		/* make 5px space between the button(filter options) in the filter bar */
 		.justified-gallery-filterbar {
-			margin-top: -5px;
-			margin-left: -5px;
+			display: flex;
+			justify-content: flex-start;
+			flex-wrap: wrap;
+			gap: 5px;
 		}
 
-		.justified-gallery-filterbar > * {
-			margin-top: 5px;
-			margin-left: 5px;
+		.fulltab .justified-gallery-filterbar {
+			position: sticky;
+			top: 0;
+			left: 0;
+			z-index: 101;
+			background-color: #222;
+			padding: 5px;
+			margin: 0px;
+		}
+
+		.justified-gallery-filterbar button {
+			padding: 6px;
+			border: 1px solid #fff;
+			border-radius: 5px;
+			background-color: transparent;
+			font-weight: bold;
+			color: #fff;
+			line-height: 1em;
+		}
+
+		.justified-gallery-filterbar button:hover {
+			text-decoration: underline;
+		}
+		.justified-gallery-filterbar button.selected {
+			text-decoration: underline;
+			background-color: #fff3
+		}
+
+		.fulltab {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 100;
+			min-height: 100%;
+			background-color: #222;
 		}
 	{{ end }}
 </style>
@@ -84,9 +118,10 @@
 Ordinal increases every time this shortcode is used in a document
 Ordinal: {{ .Ordinal}}
 -->
-{{ $galleryId := (printf "gallery_%v" .Ordinal)}}
+{{ $galleryId := (printf "gallery-%v" .Ordinal)}}
+{{ $galleryWrapperId := (printf "gallery-%v-wrapper" .Ordinal)}}
 
-
+<div id="{{ $galleryWrapperId }}" class="gallery-wrapper">
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ if eq $original.ResourceType "image" }}
@@ -163,6 +198,7 @@ Ordinal: {{ .Ordinal}}
 			</div>
 		{{ end }}
 	{{ end }}
+</div>
 </div>
 
 <script>
@@ -241,6 +277,38 @@ Ordinal: {{ .Ordinal}}
 			// insert a div for inserting filter buttons before the gallery
 			const filterbar = $("<div class='justified-gallery-filterbar'/>");
 			gallery.before(filterbar);
+
+
+			var wrapper = document.getElementById("{{ $galleryWrapperId }}");
+
+			const setFulltab = function(activate) {
+				if(activate == wrapper.classList.contains("fulltab")){
+					return;// nothing to do, we are already in the right state
+				}
+
+				wrapper.classList.toggle("fulltab");
+				gallery.justifiedGallery({
+					rowHeight : {{ $rowHeight }} * (activate ? 1.5 : 1.0),
+					// force justifiedGallery to refresh
+					refreshTime: 0,
+				});
+				// force justifiedGallery to refresh
+				gallery.data('jg.controller').startImgAnalyzer();
+				fullScreenButton.text(wrapper.classList.contains("fulltab") ? "🡦" : "🡤")
+			};
+
+			const fullScreenButton = $("<button/>");
+			fullScreenButton.text("🡤");
+			fullScreenButton.click(function () {
+				setFulltab(!wrapper.classList.contains("fulltab"));
+			});
+			filterbar.append(fullScreenButton);
+			$(document).keyup(function(e) {
+				// when ESC is pressed
+				if (e.keyCode === 27){
+					setFulltab(false);
+				}
+			});
 	
 			let first = true;
 			// create a button for each filter entry 
@@ -252,14 +320,13 @@ Ordinal: {{ .Ordinal}}
 					// remove select class from all other selt
 					filterbar.find('.selected').removeClass('selected');
 					filterButton.addClass("selected");
-					//swipeboxInstance.refresh();
 				});
 				filterbar.append(filterButton);
 
 				if(first) {
 					filterButton.trigger("click");
+					first = false;
 				}
-				first = false;
 			});
 		{{ end }}
 	});
