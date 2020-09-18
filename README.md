@@ -78,9 +78,21 @@ When the users clicks on an image, a lightbox shows up displaying the clicked im
 If the image contains a title or description there will be a top bar displaying that.
 If the `showExif` option is set to "true", some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500".
 The EXIF display will only work if you add following lines to your *config.toml*:
-```
+```TOML
 [imaging.exif]
     includeFields = ".*"
+```
+
+An advanced setting is `filterOptions`: It allows the user to filter the displayed images by using buttons.
+The text of the buttons and the regex used to filter has to be specified in a JSON array of objects. Currently it is only supported to filter by EXIF tags. In the future it will be possible to filter by image name or other EXIF fields (pull requests are welcome).
+
+In addition to the tags of the EXIF embedded in the image, a meta sidecar file can be used to add tags to an image. The file must have the same name as the image plus ".meta" (e.g. "image.jpg.meta"). The content has to be a JSON like *{"Tags":["macro","insect"}*.
+
+Additionally to the filter buttons, a button to activate full screen mode of the gallery is added
+
+An example of the `filterOptions` JSON: 
+```
+filterOptions="[{label: 'All', tags: '.*'}, {label: 'Birds', tags: 'bird'}, {label: 'Macro', tags: 'macro'}, {label: 'Insects', tags: 'insect'}]"
 ```
 
 As many websites/themes already include *jQuery*, this theme component will use the available *jQuery* lib.
