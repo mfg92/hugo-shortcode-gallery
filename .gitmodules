@@ -1,0 +1,6 @@
+[submodule "example_site/themes/hugo-paper"]
+	path = example_site/themes/hugo-paper
+	url = https://github.com/nanxiaobei/hugo-paper
+[submodule "example_site/themes/hugo-shortcode-gallery"]
+	path = example_site/themes/hugo-shortcode-gallery
+	url = https://github.com/mfg92/hugo-shortcode-gallery

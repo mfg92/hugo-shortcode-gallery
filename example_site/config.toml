@@ -1,0 +1,4 @@
+baseURL = "/"
+languageCode = "en-us"
+title = "hugo-shortcode-gallery example"
+theme = ["hugo-paper", "hugo-shortcode-gallery"]
