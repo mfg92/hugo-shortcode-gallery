@@ -1,0 +1,5 @@
+
+/* Some custom CSS is needed for the theme "hugo-paper" to make fulltab/fullscreen mode of the gallery work */
+.fulltab {
+    width: 100%;
+}

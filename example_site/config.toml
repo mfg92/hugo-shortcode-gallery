@@ -2,3 +2,14 @@ baseURL = "/"
 languageCode = "en-us"
 title = "hugo-shortcode-gallery example"
 theme = ["hugo-paper", "hugo-shortcode-gallery"]
+timeout = 600000 # This is requiered for larger galleries to be build
+
+[params]
+    galleryRowHeight    = 200
+    galleryMargins      = 10
+    galleryResizeOptions= "800x800 q88 Lanczos"
+    galleryPreviewType  = "blur"
+    galleryThumbnailHoverEffect = "enlarge"
+
+[imaging.exif]
+    includeFields = ".*"
