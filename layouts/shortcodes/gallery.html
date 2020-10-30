@@ -157,8 +157,8 @@ Ordinal: {{ .Ordinal}}
 						{{ end }}
 
 						{{ if not (eq $filterOptions "[]")  }}
-							{{/* only include tags till the filter mechanism (in JS at the end of the file) is limited to tags */}}
-							data-meta="{{ (dict "Tags" $metadata.Tags) | jsonify }}"
+							{{/* only include fields that are currently supported by the filter mechanism (in JS at the end of the file) */}}
+							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription) | jsonify }}"
 						{{ end }}
 					{{ end }}
 					>
@@ -244,32 +244,72 @@ Ordinal: {{ .Ordinal}}
 
 		// only include JS code for filter options if there at least one filter option
 		{{ if not (eq $filterOptions "[]") }}
-			// this function returns a function that can be used by justifiedGallery for filtering images
+
+			// this function can be used to create a function that can be used by justifiedGallery
+			// for filtering images by their metadata
+			function createMetadataFilter(filterFunction) {
+				return function (entry, index, array) {
+					//let title = $(entry).find("a").attr("title");
+					let meta = $(entry).find("a").attr("data-meta");
+					meta = meta ? JSON.parse(meta) : {};
+					
+					let include = filterFunction(meta);
+
+					// only those images visible in justified gallery should be displayed
+					// in swipebox (only <a> with class galleryImg are displayed in swipebox)
+					if(include) {
+						$(entry).find("a").addClass("galleryImg");
+					} else {
+						$(entry).find("a").removeClass("galleryImg");
+					}
+
+					return include;
+				}
+			}
+
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their tags
 			function createTagFilter(tagsRegexString) {
 				const tagsRegex = RegExp(tagsRegexString);
-				return function (entry, index, array) {
-						//let title = $(entry).find("a").attr("title");
-						let meta = $(entry).find("a").attr("data-meta");
-						meta = meta ? JSON.parse(meta) : {};
-						
-						let tags = meta.Tags;
-						tags = tags ? tags : [];
-						
-						//console.log("title: ", title);
-						//console.log("tags: ", tags);
+				return createMetadataFilter(function(meta) {
+					let tags = meta.Tags;
+					tags = tags ? tags : [];
+					return tags.some(tag => tagsRegex.test(tag));
+				});
+			};
 
-						const include = tags.some(tag => tagsRegex.test(tag));
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their description
+			function createImageDescriptionFilter(descriptionRegexString) {
+				const descriptionRegex = RegExp(descriptionRegexString);
+				return createMetadataFilter(function(meta) {
+					let imageDescription = meta.ImageDescription;
+					return imageDescription !== null && descriptionRegex.test(imageDescription);
+				});
+			};
 
-						// only those images visible in justified gallery should be displayed
-						// in swipebox (only <a> with class galleryImg are displayed in swipebox)
-						if(include) {
-							$(entry).find("a").addClass("galleryImg");
-						} else {
-							$(entry).find("a").removeClass("galleryImg");
-						}
-
-						return include;
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their star rating
+			function createRatingFilter(min, max) {
+				return createMetadataFilter(function(meta) {
+					let rating = meta.Rating;
+					if(rating === null){
+						rating = -1;
 					}
+					return rating >= min && rating <= max;
+				});
+			};
+
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their color labels
+			function createColorLabelFilter(color) {
+				color = color.charAt(0).toLowerCase()
+				return createMetadataFilter(function(meta) {
+					let colors = meta.ColorLabels;
+					console.log(meta.ImageDescription)
+					console.log(colors)
+					return colors && colors.includes(color);
+				});
 			};
 
 			const filterOptions = {{ $filterOptions | safeJS }};
@@ -277,7 +317,6 @@ Ordinal: {{ .Ordinal}}
 			// insert a div for inserting filter buttons before the gallery
 			const filterbar = $("<div class='justified-gallery-filterbar'/>");
 			gallery.before(filterbar);
-
 
 			var wrapper = document.getElementById("{{ $galleryWrapperId }}");
 
@@ -312,12 +351,31 @@ Ordinal: {{ .Ordinal}}
 	
 			let first = true;
 			// create a button for each filter entry 
-			filterOptions.forEach(tagFilter => {
+			filterOptions.forEach(filterConfig => {
+				let filter; // create a filter function based on the available attributes of filterConfig
+				if(filterConfig.tags) {
+					filter = createTagFilter(filterConfig.tags);
+				} else if(filterConfig.rating){
+					if(filterConfig.rating.includes("-")){
+						minMax = filterConfig.rating.split("-");  // e.g. "3-5"
+					} else {
+						minMax = [filterConfig.rating, filterConfig.rating];  // e.g. "4"
+					}
+					filter = createRatingFilter(parseInt(minMax[0]), parseInt(minMax[1]));
+				} else if(filterConfig.color_label){
+					filter = createColorLabelFilter(filterConfig.color_label);
+				} else if(filterConfig.description){
+					filter = createImageDescriptionFilter(filterConfig.description);
+				} else {
+					// use always true filter
+					filter = createMetadataFilter(function(meta){ return true; });
+				}
+
 				const filterButton = $("<button/>");
-				filterButton.text(tagFilter.label);
+				filterButton.text(filterConfig.label);
 				filterButton.click(function () {
-					gallery.justifiedGallery({filter : createTagFilter(tagFilter.tags)});
-					// remove select class from all other selt
+					gallery.justifiedGallery({filter : filter});
+					// remove select class from all other selected buttons
 					filterbar.find('.selected').removeClass('selected');
 					filterButton.addClass("selected");
 				});
@@ -331,4 +389,3 @@ Ordinal: {{ .Ordinal}}
 		{{ end }}
 	});
 </script>
-
