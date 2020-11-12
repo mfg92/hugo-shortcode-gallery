@@ -304,8 +304,6 @@ Ordinal: {{ .Ordinal}}
 				color = color.charAt(0).toLowerCase()
 				return createMetadataFilter(meta => {
 					let colors = meta.ColorLabels;
-					console.log(meta.ImageDescription)
-					console.log(colors)
 					return colors && colors.includes(color);
 				});
 			};
