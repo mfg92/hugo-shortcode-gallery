@@ -103,6 +103,16 @@
 			background-color: #fff3
 		}
 
+		.justified-gallery-filterbar button svg {
+			width: 1em;
+			height: 1em;
+			transition: scale .2s ease-in-out;
+		}
+
+		.justified-gallery-filterbar button:hover svg {
+			scale: 1.3;
+		}
+
 		.fulltab {
 			position: absolute;
 			top: 0;
@@ -316,7 +326,11 @@ Ordinal: {{ .Ordinal}}
 
 			var wrapper = document.getElementById("{{ $galleryWrapperId }}");
 
-			const setFulltab = function(activate) {
+			// inline svg icons
+			const expandIcon = '{{ (resources.Get "shortcode-gallery/font-awesome/expand-alt-solid.svg").Content | safeHTML }}';
+			const compressIcon = '{{ (resources.Get "shortcode-gallery/font-awesome/compress-alt-solid.svg").Content | safeHTML }}';
+
+			function setFulltab(activate) {
 				if(activate == wrapper.classList.contains("fulltab")){
 					return;// nothing to do, we are already in the right state
 				}
@@ -329,12 +343,13 @@ Ordinal: {{ .Ordinal}}
 				});
 				// force justifiedGallery to refresh
 				gallery.data('jg.controller').startImgAnalyzer();
-				fullScreenButton.text(wrapper.classList.contains("fulltab") ? "🡦" : "🡤")
+				fullTabButton.html(wrapper.classList.contains("fulltab") ? compressIcon : expandIcon)
 			};
 
-			const fullScreenButton = $("<button/>");
-			fullScreenButton.click(() => setFulltab(!wrapper.classList.contains("fulltab")));
-			filterbar.append(fullScreenButton);
+			const fullTabButton = $("<button/>");
+			fullTabButton.html(expandIcon);
+			fullTabButton.click(() => setFulltab(!wrapper.classList.contains("fulltab")));
+			filterbar.append(fullTabButton);
 			$(document).keyup(e => {
 				// when ESC is pressed
 				if (e.keyCode === 27){
