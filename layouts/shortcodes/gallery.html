@@ -206,7 +206,7 @@ Ordinal: {{ .Ordinal}}
 		alert("jquery is not loaded");
 	}
 
-	$( document ).ready(function() {
+	$( document ).ready(() => {
 		const gallery = $("#{{ $galleryId }}");
 		{{ $lastRowJustification := .Get "lastRow" | default (.Site.Params.galleryLastRow | default "justify") }}
 
@@ -222,15 +222,13 @@ Ordinal: {{ .Ordinal}}
 		// the instance of swipebox, it will be set once justifiedGallery is initialized
 		let swipeboxInstance = null;
 
-		gallery.on('jg.complete', function () {
+		gallery.on('jg.complete', () => {
 			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
 				// if there is already some low resolution image data loaded, then we will wait for loading´
 				// the hi-res until the justified gallery has done the layout
-				$(function() {
+				$(() => {
 					$('.lazy').Lazy({
-						afterLoad: function(element) {
-							element.css({filter: "none", transition: "filter 1.0s ease-in-out"});
-						},
+						afterLoad: element => element.css({filter: "none", transition: "filter 1.0s ease-in-out"})
 					});
 				});
 			{{ end }}
@@ -248,7 +246,7 @@ Ordinal: {{ .Ordinal}}
 			// this function can be used to create a function that can be used by justifiedGallery
 			// for filtering images by their metadata
 			function createMetadataFilter(filterFunction) {
-				return function (entry, index, array) {
+				return (entry, index, array) => {
 					//let title = $(entry).find("a").attr("title");
 					let meta = $(entry).find("a").attr("data-meta");
 					meta = meta ? JSON.parse(meta) : {};
@@ -271,7 +269,7 @@ Ordinal: {{ .Ordinal}}
 			// for filtering images by their tags
 			function createTagFilter(tagsRegexString) {
 				const tagsRegex = RegExp(tagsRegexString);
-				return createMetadataFilter(function(meta) {
+				return createMetadataFilter(meta => {
 					let tags = meta.Tags;
 					tags = tags ? tags : [];
 					return tags.some(tag => tagsRegex.test(tag));
@@ -282,7 +280,7 @@ Ordinal: {{ .Ordinal}}
 			// for filtering images by their description
 			function createImageDescriptionFilter(descriptionRegexString) {
 				const descriptionRegex = RegExp(descriptionRegexString);
-				return createMetadataFilter(function(meta) {
+				return createMetadataFilter(meta => {
 					let imageDescription = meta.ImageDescription;
 					return imageDescription !== null && descriptionRegex.test(imageDescription);
 				});
@@ -291,7 +289,7 @@ Ordinal: {{ .Ordinal}}
 			// this function returns a function that can be used by justifiedGallery
 			// for filtering images by their star rating
 			function createRatingFilter(min, max) {
-				return createMetadataFilter(function(meta) {
+				return createMetadataFilter(meta => {
 					let rating = meta.Rating;
 					if(rating === null){
 						rating = -1;
@@ -304,7 +302,7 @@ Ordinal: {{ .Ordinal}}
 			// for filtering images by their color labels
 			function createColorLabelFilter(color) {
 				color = color.charAt(0).toLowerCase()
-				return createMetadataFilter(function(meta) {
+				return createMetadataFilter(meta => {
 					let colors = meta.ColorLabels;
 					console.log(meta.ImageDescription)
 					console.log(colors)
@@ -337,12 +335,9 @@ Ordinal: {{ .Ordinal}}
 			};
 
 			const fullScreenButton = $("<button/>");
-			fullScreenButton.text("🡤");
-			fullScreenButton.click(function () {
-				setFulltab(!wrapper.classList.contains("fulltab"));
-			});
+			fullScreenButton.click(() => setFulltab(!wrapper.classList.contains("fulltab")));
 			filterbar.append(fullScreenButton);
-			$(document).keyup(function(e) {
+			$(document).keyup(e => {
 				// when ESC is pressed
 				if (e.keyCode === 27){
 					setFulltab(false);
@@ -368,12 +363,12 @@ Ordinal: {{ .Ordinal}}
 					filter = createImageDescriptionFilter(filterConfig.description);
 				} else {
 					// use always true filter
-					filter = createMetadataFilter(function(meta){ return true; });
+					filter = createMetadataFilter(meta => true);
 				}
 
 				const filterButton = $("<button/>");
 				filterButton.text(filterConfig.label);
-				filterButton.click(function () {
+				filterButton.click(() => {
 					gallery.justifiedGallery({filter : filter});
 					// remove select class from all other selected buttons
 					filterbar.find('.selected').removeClass('selected');
