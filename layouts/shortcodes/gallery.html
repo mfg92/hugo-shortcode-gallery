@@ -286,6 +286,7 @@ Ordinal: {{ .Ordinal}}
 				wrapper.classList.toggle("fulltab");
 				gallery.justifiedGallery({
 					rowHeight : {{ $rowHeight }} * (activate ? 1.5 : 1.0),
+					lastRow: (activate ? "nojustify": {{ $lastRowJustification }}),
 					// force justifiedGallery to refresh
 					refreshTime: 0,
 				});
