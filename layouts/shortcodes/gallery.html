@@ -56,7 +56,7 @@
 {{ end }}
 
 <style>
-	{{ if  (eq $thumbnailHoverEffect "enlarge") }}
+	{{ if (eq $thumbnailHoverEffect "enlarge") }}
 		.jg-entry img {
 			transition: transform .25s ease-in-out !important;
 		}
@@ -66,51 +66,9 @@
 		}
 	{{ end }}
 
-	{{ if not (eq $filterOptions "[]")  }}
-		/* make 5px space between the button(filter options) in the filter bar */
-		.justified-gallery-filterbar {
-			display: flex;
-			justify-content: flex-start;
-			flex-wrap: wrap;
-			gap: 5px;
-		}
-
-		.fulltab .justified-gallery-filterbar {
-			position: sticky;
-			top: 0;
-			left: 0;
-			z-index: 101;
-			background-color: #222;
-			padding: 5px;
-			margin: 0px;
-		}
-
-		.justified-gallery-filterbar button {
-			padding: 6px;
-			border: 1px solid #fff;
-			border-radius: 5px;
-			background-color: transparent;
-			font-weight: bold;
-			color: #fff;
-			line-height: 1em;
-		}
-
-		.justified-gallery-filterbar button:hover {
-			text-decoration: underline;
-		}
-		.justified-gallery-filterbar button.selected {
-			text-decoration: underline;
-			background-color: #fff3
-		}
-
-		.fulltab {
-			position: absolute;
-			top: 0;
-			left: 0;
-			z-index: 100;
-			min-height: 100%;
-			background-color: #222;
-		}
+	{{ if not (eq $filterOptions "[]") }}
+		/* inline css from assets folder */
+		{{ (resources.Get "shortcode-gallery/filterbar.sass" | toCSS).Content | safeCSS }}
 	{{ end }}
 </style>
 
@@ -157,8 +115,8 @@ Ordinal: {{ .Ordinal}}
 						{{ end }}
 
 						{{ if not (eq $filterOptions "[]")  }}
-							{{/* only include tags till the filter mechanism (in JS at the end of the file) is limited to tags */}}
-							data-meta="{{ (dict "Tags" $metadata.Tags) | jsonify }}"
+							{{/* only include fields that are currently supported by the filter mechanism (in JS at the end of the file) */}}
+							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription) | jsonify }}"
 						{{ end }}
 					{{ end }}
 					>
@@ -206,7 +164,7 @@ Ordinal: {{ .Ordinal}}
 		alert("jquery is not loaded");
 	}
 
-	$( document ).ready(function() {
+	$( document ).ready(() => {
 		const gallery = $("#{{ $galleryId }}");
 		{{ $lastRowJustification := .Get "lastRow" | default (.Site.Params.galleryLastRow | default "justify") }}
 
@@ -222,15 +180,13 @@ Ordinal: {{ .Ordinal}}
 		// the instance of swipebox, it will be set once justifiedGallery is initialized
 		let swipeboxInstance = null;
 
-		gallery.on('jg.complete', function () {
+		gallery.on('jg.complete', () => {
 			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
 				// if there is already some low resolution image data loaded, then we will wait for loading´
 				// the hi-res until the justified gallery has done the layout
-				$(function() {
+				$(() => {
 					$('.lazy').Lazy({
-						afterLoad: function(element) {
-							element.css({filter: "none", transition: "filter 1.0s ease-in-out"});
-						},
+						afterLoad: element => element.css({filter: "none", transition: "filter 1.0s ease-in-out"})
 					});
 				});
 			{{ end }}
@@ -244,32 +200,70 @@ Ordinal: {{ .Ordinal}}
 
 		// only include JS code for filter options if there at least one filter option
 		{{ if not (eq $filterOptions "[]") }}
-			// this function returns a function that can be used by justifiedGallery for filtering images
+
+			// this function can be used to create a function that can be used by justifiedGallery
+			// for filtering images by their metadata
+			function createMetadataFilter(filterFunction) {
+				return (entry, index, array) => {
+					//let title = $(entry).find("a").attr("title");
+					let meta = $(entry).find("a").attr("data-meta");
+					meta = meta ? JSON.parse(meta) : {};
+					
+					let include = filterFunction(meta);
+
+					// only those images visible in justified gallery should be displayed
+					// in swipebox (only <a> with class galleryImg are displayed in swipebox)
+					if(include) {
+						$(entry).find("a").addClass("galleryImg");
+					} else {
+						$(entry).find("a").removeClass("galleryImg");
+					}
+
+					return include;
+				}
+			}
+
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their tags
 			function createTagFilter(tagsRegexString) {
 				const tagsRegex = RegExp(tagsRegexString);
-				return function (entry, index, array) {
-						//let title = $(entry).find("a").attr("title");
-						let meta = $(entry).find("a").attr("data-meta");
-						meta = meta ? JSON.parse(meta) : {};
-						
-						let tags = meta.Tags;
-						tags = tags ? tags : [];
-						
-						//console.log("title: ", title);
-						//console.log("tags: ", tags);
+				return createMetadataFilter(meta => {
+					let tags = meta.Tags;
+					tags = tags ? tags : [];
+					return tags.some(tag => tagsRegex.test(tag));
+				});
+			};
 
-						const include = tags.some(tag => tagsRegex.test(tag));
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their description
+			function createImageDescriptionFilter(descriptionRegexString) {
+				const descriptionRegex = RegExp(descriptionRegexString);
+				return createMetadataFilter(meta => {
+					let imageDescription = meta.ImageDescription;
+					return imageDescription !== null && descriptionRegex.test(imageDescription);
+				});
+			};
 
-						// only those images visible in justified gallery should be displayed
-						// in swipebox (only <a> with class galleryImg are displayed in swipebox)
-						if(include) {
-							$(entry).find("a").addClass("galleryImg");
-						} else {
-							$(entry).find("a").removeClass("galleryImg");
-						}
-
-						return include;
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their star rating
+			function createRatingFilter(min, max) {
+				return createMetadataFilter(meta => {
+					let rating = meta.Rating;
+					if(rating === null){
+						rating = -1;
 					}
+					return rating >= min && rating <= max;
+				});
+			};
+
+			// this function returns a function that can be used by justifiedGallery
+			// for filtering images by their color labels
+			function createColorLabelFilter(color) {
+				color = color.charAt(0).toLowerCase()
+				return createMetadataFilter(meta => {
+					let colors = meta.ColorLabels;
+					return colors && colors.includes(color);
+				});
 			};
 
 			const filterOptions = {{ $filterOptions | safeJS }};
@@ -278,10 +272,13 @@ Ordinal: {{ .Ordinal}}
 			const filterbar = $("<div class='justified-gallery-filterbar'/>");
 			gallery.before(filterbar);
 
-
 			var wrapper = document.getElementById("{{ $galleryWrapperId }}");
 
-			const setFulltab = function(activate) {
+			// inline svg icons
+			const expandIcon = '{{ (resources.Get "shortcode-gallery/font-awesome/expand-alt-solid.svg").Content | safeHTML }}';
+			const compressIcon = '{{ (resources.Get "shortcode-gallery/font-awesome/compress-alt-solid.svg").Content | safeHTML }}';
+
+			function setFulltab(activate) {
 				if(activate == wrapper.classList.contains("fulltab")){
 					return;// nothing to do, we are already in the right state
 				}
@@ -289,21 +286,20 @@ Ordinal: {{ .Ordinal}}
 				wrapper.classList.toggle("fulltab");
 				gallery.justifiedGallery({
 					rowHeight : {{ $rowHeight }} * (activate ? 1.5 : 1.0),
+					lastRow: (activate ? "nojustify": {{ $lastRowJustification }}),
 					// force justifiedGallery to refresh
 					refreshTime: 0,
 				});
 				// force justifiedGallery to refresh
 				gallery.data('jg.controller').startImgAnalyzer();
-				fullScreenButton.text(wrapper.classList.contains("fulltab") ? "🡦" : "🡤")
+				fullTabButton.html(wrapper.classList.contains("fulltab") ? compressIcon : expandIcon)
 			};
 
-			const fullScreenButton = $("<button/>");
-			fullScreenButton.text("🡤");
-			fullScreenButton.click(function () {
-				setFulltab(!wrapper.classList.contains("fulltab"));
-			});
-			filterbar.append(fullScreenButton);
-			$(document).keyup(function(e) {
+			const fullTabButton = $("<button/>");
+			fullTabButton.html(expandIcon);
+			fullTabButton.click(() => setFulltab(!wrapper.classList.contains("fulltab")));
+			filterbar.append(fullTabButton);
+			$(document).keyup(e => {
 				// when ESC is pressed
 				if (e.keyCode === 27){
 					setFulltab(false);
@@ -312,12 +308,31 @@ Ordinal: {{ .Ordinal}}
 	
 			let first = true;
 			// create a button for each filter entry 
-			filterOptions.forEach(tagFilter => {
+			filterOptions.forEach(filterConfig => {
+				let filter; // create a filter function based on the available attributes of filterConfig
+				if(filterConfig.tags) {
+					filter = createTagFilter(filterConfig.tags);
+				} else if(filterConfig.rating){
+					if(filterConfig.rating.includes("-")){
+						minMax = filterConfig.rating.split("-");  // e.g. "3-5"
+					} else {
+						minMax = [filterConfig.rating, filterConfig.rating];  // e.g. "4"
+					}
+					filter = createRatingFilter(parseInt(minMax[0]), parseInt(minMax[1]));
+				} else if(filterConfig.color_label){
+					filter = createColorLabelFilter(filterConfig.color_label);
+				} else if(filterConfig.description){
+					filter = createImageDescriptionFilter(filterConfig.description);
+				} else {
+					// use always true filter
+					filter = createMetadataFilter(meta => true);
+				}
+
 				const filterButton = $("<button/>");
-				filterButton.text(tagFilter.label);
-				filterButton.click(function () {
-					gallery.justifiedGallery({filter : createTagFilter(tagFilter.tags)});
-					// remove select class from all other selt
+				filterButton.text(filterConfig.label);
+				filterButton.click(() => {
+					gallery.justifiedGallery({filter : filter});
+					// remove select class from all other selected buttons
 					filterbar.find('.selected').removeClass('selected');
 					filterButton.addClass("selected");
 				});
@@ -331,4 +346,3 @@ Ordinal: {{ .Ordinal}}
 		{{ end }}
 	});
 </script>
-

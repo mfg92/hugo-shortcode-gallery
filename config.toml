@@ -1,0 +1,3 @@
+# this allows to use resources.Get to get resources of the folder "assets"
+# see https://github.com/gohugoio/hugo/commit/dea71670c059ab4d5a42bd22503f18c087dd22d4
+assetDir = "assets"
