@@ -35,7 +35,7 @@ https://gohugo.io/hugo-modules/theme-components/.
 
 This [shell script](hugo_shortcode_gallery_generator.sh) sets up a hugo site including the short-code generator and a couple of images.
 
-`curl -sL https://raw.githubusercontent.com/RidaAyed/hugo-shortcode-gallery/CreateExampleSiteScript/hugo_shortcode_gallery_generator.sh | bash -s -- -m`
+`curl -sL https://raw.githubusercontent.com/RidaAyed/hugo-shortcode-gallery/CreateExampleSiteScript/hugo_shortcode_gallery_generator.sh | bash -s --`
 
 ## Usage Example
 
