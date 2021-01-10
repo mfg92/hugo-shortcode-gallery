@@ -86,7 +86,14 @@ The EXIF display will only work if you add following lines to your *config.toml*
 An advanced setting is `filterOptions`: It allows the user to filter the displayed images by using buttons.
 The text of the buttons and the regex used to filter has to be specified in a JSON array of objects. Currently it is only supported to filter by EXIF tags. In the future it will be possible to filter by image name or other EXIF fields (pull requests are welcome).
 
-In addition to the tags of the EXIF embedded in the image, a meta sidecar file can be used to add tags to an image. The file must have the same name as the image plus ".meta" (e.g. "image.jpg.meta"). The content has to be a JSON like *{"Tags":["macro","insect"]}*.
+In addition to the tags of the EXIF embedded in the image, a meta sidecar file can be used to add tags to an image. The file must have the same name as the image plus ".meta" (e.g. "image.jpg.meta"). The content has to be a *JSON* like:
+
+```JSON
+{
+"Tags":
+["macro","insect"]
+}
+ ```
 
 Additionally to the filter buttons, a button to activate full screen mode of the gallery is added
 
