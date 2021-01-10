@@ -31,6 +31,11 @@ theme = ["your-main-theme", "hugo-shortcode-gallery"]
 To read about hugo's theme components and how to use them have a look at 
 https://gohugo.io/hugo-modules/theme-components/.
 
+### Shell script to setup a demo gallery
+
+This [shell script](hugo_shortcode_gallery_generator.sh) sets up a hugo site including the short-code generator and a couple of images.
+
+`curl -sL https://raw.githubusercontent.com/home-assistant/hassio-installer/master/hassio_install.sh | bash -s -- m`
 
 ## Usage Example
 
