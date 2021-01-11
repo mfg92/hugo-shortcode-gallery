@@ -55,7 +55,6 @@ echo "Add the word 'foobar' and some others to the post"
 printf '# foobar\nbar\n- lorem\n- ipsum' >> $OUT_DIR/$SITE/content/posts/my-first-post.md
 
 echo "Start hugo server and build $SITE"
-hugo server --buildDrafts &
 nohup hugo server --buildDrafts &
 
 echo "Do a test: \
