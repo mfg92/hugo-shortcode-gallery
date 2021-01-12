@@ -14,7 +14,6 @@ then
 else
     #Else set second argument as sitename
     SITE=$2
-fi
 if [ -z "$3" ]
    #If third argument is empty set "hugo" as path
 then
