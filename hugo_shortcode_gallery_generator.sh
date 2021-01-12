@@ -43,12 +43,10 @@ echo "Get a lightweight theme"
 cd $OUT_DIR/$SITE
 git init
 git submodule add https://github.com/de-souza/hugo-flex.git themes/hugo-flex
-# git submodule add https://github.com/yihui/hugo-xmin themes/hugo-xmin
 
 echo "Add the theme to the site's config"
 
 echo 'theme = "hugo-flex"' >> config.toml
-# echo 'theme = "hugo-xmin"' >> config.toml
 
 echo "Create a first post"
 hugo new posts/my-first-post.md
@@ -86,7 +84,6 @@ git clone https://github.com/mfg92/hugo-shortcode-gallery.git
 echo "Adding this theme to $OUT_DIR/$SITE/config.toml using GNU sed"
 
 echo `sed --debug -i 's/"hugo-flex"/\["hugo-flex", "hugo-shortcode-gallery"\]/' $OUT_DIR/$SITE/config.toml`
-# echo `sed --debug -i 's/"hugo-xmin"/\["hugo-xmin", "hugo-shortcode-gallery"\]/' $OUT_DIR/$SITE/config.toml`
 
 echo "Adding the gallery to the navigation in $OUT_DIR/$SITE/config.toml"
 printf "
