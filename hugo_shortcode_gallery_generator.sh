@@ -15,6 +15,14 @@ else
     #Else set second argument as sitename
     SITE=$2
 fi
+if [ -z "$3" ]
+   #If third argument is empty set "hugo" as path
+then
+    HUGOPATH=hugo
+else
+    #Else set third argument as path
+    HUGOPATH=$3
+fi
 
 echo "Check if $OUT_DIR does not exist"
 if [ ! -d "$OUT_DIR" ]
@@ -37,7 +45,7 @@ echo "sudo rm -r -f $SITE"
 # sudo rm -r -f $SITE
 
 echo "Generate a new site"
-hugo new site $SITE
+$HUGOPATH new site $SITE
 
 echo "Get a lightweight theme"
 cd $OUT_DIR/$SITE
@@ -49,7 +57,7 @@ echo "Add the theme to the site's config"
 echo 'theme = "hugo-flex"' >> config.toml
 
 echo "Create a first post"
-hugo new posts/my-first-post.md
+$HUGOPATH new posts/my-first-post.md
 
 echo "Show what has been created"
 cat ~$OUT_DIR/$SITE/content/posts/my-first-post.md
@@ -58,7 +66,7 @@ echo "Add the word 'foobar' and some others to the post"
 printf '# foobar\nbar\n- lorem\n- ipsum' >> $OUT_DIR/$SITE/content/posts/my-first-post.md
 
 echo "Start hugo server and build $SITE"
-nohup hugo server --buildDrafts &
+nohup $HUGOPATH server --buildDrafts &
 
 echo "Do a test: \
 Wait some time for hugo to generate the server, \
@@ -98,7 +106,7 @@ mkdir --parents $OUT_DIR/$SITE/content/gallery/images
 
 echo "Create the index.md in the gallery folder"
 cd $OUT_DIR/$SITE
-hugo new /gallery/index.md
+$HUGOPATH new /gallery/index.md
 
 echo "Check content of index.md"
 cat $OUT_DIR/$SITE/content/gallery/index.md
@@ -121,7 +129,7 @@ printf 'Here is an example gallery:
 
 echo "cd into $OUT_DIR/$SITE and build the site"
 cd $OUT_DIR/$SITE
-nohup hugo server --buildDrafts &
+nohup $HUGOPATH server --buildDrafts &
 
 echo "Do a test: \
 Wait some time for hugo to generate the server, \
