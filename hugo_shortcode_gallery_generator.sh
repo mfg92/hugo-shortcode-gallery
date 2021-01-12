@@ -1,14 +1,18 @@
 #!/bin/sh
 if [ -z "$1" ]
+   #If first argument is empty set "/tmp" as working directory
 then
     OUT_DIR=/tmp
 else
+    #Else set first argument as working directory
     OUT_DIR=$1
 fi
 if [ -z "$2" ]
+   #If second argument is empty set "hugo" as sitename
 then
     SITE=hugo
 else
+    #Else set second argument as sitename
     SITE=$2
 fi
 
