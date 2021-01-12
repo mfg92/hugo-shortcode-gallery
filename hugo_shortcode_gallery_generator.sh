@@ -10,7 +10,7 @@ fi
 if [ -z "$2" ]
    #If second argument is empty set "hugo" as sitename
 then
-    SITE=hugo
+    SITE=mysite
 else
     #Else set second argument as sitename
     SITE=$2
@@ -36,7 +36,7 @@ uncommenting this line in the script or run it manually:"
 echo "sudo rm -r -f $SITE"
 # sudo rm -r -f $SITE
 
-echo "Generate a new site with $SITE"
+echo "Generate a new site"
 hugo new site $SITE
 
 echo "Get a lightweight theme"
@@ -119,7 +119,7 @@ printf 'Here is an example gallery:
     embedPreview="true"
 >}}' >> $OUT_DIR/$SITE/content/gallery/index.md
 
-echo "cd into $OUT_DIR/$SITE and build the site using hugo"
+echo "cd into $OUT_DIR/$SITE and build the site"
 cd $OUT_DIR/$SITE
 nohup hugo server --buildDrafts &
 
