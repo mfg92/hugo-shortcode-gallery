@@ -37,7 +37,7 @@ https://gohugo.io/hugo-modules/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" resizeOptions="600x300 q90 Lanczos" showExif=true previewType="blur" embedPreview="true" >}}
+{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" resizeOptions="600x600 q90 Lanczos" showExif=true previewType="blur" embedPreview="true" >}}
 ```
 
 This shortcode will generate a gallery containing all images of the folder *images*.
@@ -59,7 +59,7 @@ The `rowHeight` parameter determines the height of the rows that are displayed w
 
 A thumbnail is generated using the `resizeOptions` parameter, they are handed over
 to *Hugo's* [image processing](https://gohugo.io/content-management/image-processing/)
-function using the fit method. In the example above, the generated thumbnails have a width of max 300 pixel and
+function using the fit method. In the example above, the generated thumbnails have a width of max 600 pixel and
 a height of max 600, the actual width and height depend on the original aspect ratio. The JPEG image quality is 90% and the
 scaling uses the high quality *Lanczos* filter.
 
