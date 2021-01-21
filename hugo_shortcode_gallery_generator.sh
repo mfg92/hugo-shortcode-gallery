@@ -36,7 +36,7 @@ echo "Sitename is $SITE"
 cd $OUT_DIR
 
 echo "Kill any running hugo server"
-sudo killall -s SIGKILL hugo
+sudo killall --quiet --signal SIGKILL hugo
 
 echo "Remove any remnants from previous tests by \
 uncommenting this line in the script or run it manually:"
@@ -77,7 +77,7 @@ sleep 3s
 echo `curl -s http://localhost:1313/ | grep 'foobar'`
 
 echo "Kill any running hugo server"
-sudo killall -s SIGKILL hugo
+sudo killall --quiet --signal SIGKILL hugo
 
 echo "Remove any remnants from previous tests by \
 uncommenting this line in the script or run it manually:"
