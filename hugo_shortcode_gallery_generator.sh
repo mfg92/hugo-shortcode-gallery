@@ -5,7 +5,7 @@ then
     OUT_DIR=/tmp
 else
     #Else set first argument as working directory
-    OUT_DIR=$1
+    OUT_DIR=`pwd`"/$1"
 fi
 if [ -z "$2" ]
    #If second argument is empty set "hugo" as sitename
