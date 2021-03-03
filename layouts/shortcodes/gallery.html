@@ -205,7 +205,6 @@ Ordinal: {{ .Ordinal}}
 			// for filtering images by their metadata
 			function createMetadataFilter(filterFunction) {
 				return (entry, index, array) => {
-					//let title = $(entry).find("a").attr("title");
 					let meta = $(entry).find("a").attr("data-meta");
 					meta = meta ? JSON.parse(meta) : {};
 					
@@ -213,11 +212,7 @@ Ordinal: {{ .Ordinal}}
 
 					// only those images visible in justified gallery should be displayed
 					// in swipebox (only <a> with class galleryImg are displayed in swipebox)
-					if(include) {
-						$(entry).find("a").addClass("galleryImg");
-					} else {
-						$(entry).find("a").removeClass("galleryImg");
-					}
+					$(entry).find("a").toggleClass("galleryImg", include);
 
 					return include;
 				}
@@ -280,7 +275,7 @@ Ordinal: {{ .Ordinal}}
 
 			function setFulltab(activate) {
 				if(activate == wrapper.classList.contains("fulltab")){
-					return;// nothing to do, we are already in the right state
+					return;  // nothing to do, we are already in the right state
 				}
 
 				wrapper.classList.toggle("fulltab");
@@ -324,7 +319,7 @@ Ordinal: {{ .Ordinal}}
 				} else if(filterConfig.description){
 					filter = createImageDescriptionFilter(filterConfig.description);
 				} else {
-					// use always true filter
+					// default to always true filter
 					filter = createMetadataFilter(meta => true);
 				}
 
