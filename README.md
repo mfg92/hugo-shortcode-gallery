@@ -102,6 +102,8 @@ An example of the `filterOptions` JSON:
 filterOptions="[{label: 'All', tags: '.*'}, {label: 'Birds', tags: 'bird'}, {label: 'Macro', tags: 'macro'}, {label: 'Insects', tags: 'insect'}]"
 ```
 
+When `filterOptions` is used, the switch `storeSelectedFilterInUrl` can be set to `true`. This will instruct the gallery to append the name of the filter to the url displayed in the browser when a filter button is clicked. This has two purposes: The user can share this link and recipients will see the gallery with the same filter as the original user. Furthermore the selected filter is stored in the browsers history. 
+
 As many websites/themes already include *jQuery*, this theme component will use the available *jQuery* lib.
 If the page does not already use *jQuery* the parameter `loadJQuery=true` must be used to
 instruct the theme component to load the provided *jQuery* lib.

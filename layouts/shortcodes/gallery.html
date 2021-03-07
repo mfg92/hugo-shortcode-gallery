@@ -10,6 +10,8 @@
 	{{ $filterOptions = "[]" }}
 {{ end }}
 
+{{ $storeSelectedFilterInUrl := .Get "storeSelectedFilterInUrl" | default (.Site.Params.storeSelectedFilterInUrl | default false) }}
+
 {{ $sortOrder := .Get "sortOrder" | default (.Site.Params.gallerySortOrder | default "asc") }}
 
 {{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
@@ -175,6 +177,13 @@ Ordinal: {{ .Ordinal}}
 			waitThumbnailsLoad : false,
 			lastRow : {{ $lastRowJustification }},
 			captions : false,
+			// if there is at least one filter option
+			{{ if not (eq $filterOptions "[]") }}
+				// we first show no images at all
+				// till the code way below selects a filter and applies it 
+				// this prevent creating the layout twice
+				filter : () => false
+			{{ end }}
 		});
 
 		// the instance of swipebox, it will be set once justifiedGallery is initialized
@@ -186,6 +195,7 @@ Ordinal: {{ .Ordinal}}
 				// the hi-res until the justified gallery has done the layout
 				$(() => {
 					$('.lazy').Lazy({
+						visibleOnly: true,
 						afterLoad: element => element.css({filter: "none", transition: "filter 1.0s ease-in-out"})
 					});
 				});
@@ -261,11 +271,12 @@ Ordinal: {{ .Ordinal}}
 				});
 			};
 
+			
 			const filterOptions = {{ $filterOptions | safeJS }};
 			
 			// insert a div for inserting filter buttons before the gallery
-			const filterbar = $("<div class='justified-gallery-filterbar'/>");
-			gallery.before(filterbar);
+			const filterBar = $("<div class='justified-gallery-filterbar'/>");
+			gallery.before(filterBar);
 
 			var wrapper = document.getElementById("{{ $galleryWrapperId }}");
 
@@ -293,15 +304,31 @@ Ordinal: {{ .Ordinal}}
 			const fullTabButton = $("<button/>");
 			fullTabButton.html(expandIcon);
 			fullTabButton.click(() => setFulltab(!wrapper.classList.contains("fulltab")));
-			filterbar.append(fullTabButton);
+			filterBar.append(fullTabButton);
 			$(document).keyup(e => {
 				// when ESC is pressed
 				if (e.keyCode === 27){
 					setFulltab(false);
 				}
 			});
+
+			function activateFilterButton(filterButton) {
+				// activate associated filter
+				gallery.justifiedGallery({filter : filterButton.filter});
+				// remove select class from all other selected buttons
+				filterBar.find('.selected').removeClass('selected');
+				filterButton.addClass("selected");
+			};
 	
-			let first = true;
+			// check if the url contains an instruction to apply a specific filter
+			// eg. example.com/images/#gallery-filter=Birds
+			const params = new URLSearchParams(location.hash.replace(/^\#/,""));
+			let activeFilter = params.get('gallery-filter');
+			if (!activeFilter) {
+				// default to first filter
+				activeFilter = filterOptions[0].label;
+			}
+
 			// create a button for each filter entry 
 			filterOptions.forEach(filterConfig => {
 				let filter; // create a filter function based on the available attributes of filterConfig
@@ -325,17 +352,21 @@ Ordinal: {{ .Ordinal}}
 
 				const filterButton = $("<button/>");
 				filterButton.text(filterConfig.label);
+				filterButton.filter = filter;
 				filterButton.click(() => {
-					gallery.justifiedGallery({filter : filter});
-					// remove select class from all other selected buttons
-					filterbar.find('.selected').removeClass('selected');
-					filterButton.addClass("selected");
-				});
-				filterbar.append(filterButton);
+					activateFilterButton(filterButton);
 
-				if(first) {
-					filterButton.trigger("click");
-					first = false;
+					{{ if $storeSelectedFilterInUrl }}
+						// save applied filter in browser url
+						const params = new URLSearchParams(location.hash.replace(/^\#/,""));
+						params.set('gallery-filter', filterConfig.label);+
+						window.history.replaceState("", "", location.pathname + location.search + "#" + params.toString());
+					{{ end }}
+				});
+				filterBar.append(filterButton);
+
+				if(filterConfig.label.toLowerCase() === activeFilter.toLowerCase()) {
+					activateFilterButton(filterButton);
 				}
 			});
 		{{ end }}
