@@ -75,7 +75,7 @@ It defaults to "none", but it can be set to "enlarge", in that case the image is
 The setting `lastRow` configures the justification of the last row of the grid. When set to "justify", the entire grid including the last row will be fully-justified, right and left. This parameter respects all of the `lastRow` options of Justified Gallery, including "nojustify" and "hide".
 
 When the users clicks on an image, a lightbox shows up displaying the clicked image in large using the whole available space.
-If the image contains a title or description there will be a top bar displaying that.
+If the image contains a title or description (exif metadata field ImageDescription) there will be a top bar displaying that.
 If the `showExif` option is set to `true` (without quotes), some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500".
 The EXIF display will only work if you add following lines to your *config.toml*:
 ```TOML
