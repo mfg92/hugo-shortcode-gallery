@@ -109,7 +109,9 @@ Ordinal: {{ .Ordinal}}
 				<a href="{{ $original.RelPermalink }}" 
 					class="galleryImg"
 					{{ with $metadata }}
-						{{ if .ImageDescription }}
+						{{ if .Title }}
+							title="{{ .Title }}"
+						{{ else if .ImageDescription }}
 							title="{{ .ImageDescription }}"
 						{{ end }}
 
