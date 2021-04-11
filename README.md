@@ -75,7 +75,7 @@ It defaults to "none", but it can be set to "enlarge", in that case the image is
 The setting `lastRow` configures the justification of the last row of the grid. When set to "justify", the entire grid including the last row will be fully-justified, right and left. This parameter respects all of the `lastRow` options of Justified Gallery, including "nojustify" and "hide".
 
 When the users clicks on an image, a lightbox shows up displaying the clicked image in large using the whole available space.
-If the image contains a title or description (exif metadata field ImageDescription) there will be a top bar displaying that.
+If the image contains a title/description in the EXIF metadata field _ImageDescription_ or a title is defined in the image's sidecar file (see section below) there will be a top bar displaying that.
 If the `showExif` option is set to `true` (without quotes), some parts of the image's EXIF data will be shown on the bottom bar e.g.: "Canon EOS 80D + EF100-400mm f/4.5-5.6L IS II USM 400mm f/8 1/400sec ISO 2500".
 The EXIF display will only work if you add following lines to your *config.toml*:
 ```TOML
@@ -84,18 +84,9 @@ The EXIF display will only work if you add following lines to your *config.toml*
 ```
 
 An advanced setting is `filterOptions`: It allows the user to filter the displayed images by using buttons.
-The text of the buttons and the regex used to filter has to be specified in a JSON array of objects. Currently it is only supported to filter by EXIF tags. In the future it will be possible to filter by image name or other EXIF fields (pull requests are welcome).
+The text of the buttons and the regex used to filter has to be specified in a JSON array of objects. Currently it is only supported to filter by EXIF tags, image description, start rating or color labels. In the future it will be possible to filter by image name or other EXIF fields (pull requests are welcome). In addition to the metadata of the EXIF embedded in the image, a metadata sidecar file (see section below) can be used to add metadata for filtering.
 
-In addition to the tags of the EXIF embedded in the image, a meta sidecar file can be used to add tags to an image. The file must have the same name as the image plus ".meta" (e.g. "image.jpg.meta"). The content has to be a *JSON* like:
-
-```JSON
-{
-"Tags":
-["macro","insect"]
-}
- ```
-
-Additionally to the filter buttons, a button to activate full screen mode of the gallery is added
+Additionally to the filter buttons, a button to activate full screen mode of the gallery is added.
 
 An example of the `filterOptions` JSON: 
 ```
@@ -110,6 +101,19 @@ instruct the theme component to load the provided *jQuery* lib.
 
 All settings can be done globally in the site's *config.toml*, for that the prefix `gallery` has to be used. E.g. `galleryLoadJQuery` instead of `loadJQuery`.
 
+## Sidecar files
+
+The metadata embedded in a image can be extended/overshadowed by a metadata sidecar file. The file must have the same name as the image plus ".meta" (e.g. "image.jpg.meta"). The content has to be a *JSON* like:
+
+```JSON
+{
+"Tags": ["macro","insect"],
+"Title": "Maya the Bee",
+"ColorLabels": "RG",
+"Rating": 3
+}
+ ```
+
 ## Requirements
 
 This component requires a hugo version >= 0.59.
@@ -118,7 +122,7 @@ This component requires a hugo version >= 0.59.
 
 The component uses (and includes) [*Justified Gallery*](http://miromannino.github.io/Justified-Gallery/)
 to render the images between the text and [*Swipebox*](http://brutaldesign.github.io/swipebox/)
-to show them full screen.
+to show them full screen. These dependencies are included in this repository.
 
 ## Troubleshooting
 
