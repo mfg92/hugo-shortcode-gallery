@@ -86,8 +86,8 @@ Ordinal: {{ .Ordinal}}
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ if eq $original.ResourceType "image" }}
-			{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
-
+		
+			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}	
 			{{ $metaFileName := print $original.Name ".meta"}}
 			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 			{{ if $metadata }}
@@ -103,6 +103,29 @@ Ordinal: {{ .Ordinal}}
 					{{ $metadata = merge .Tags $metadata }}
 				{{ end }}
 			{{ end }}
+
+
+			{{/* Compute rotation to correct orientation of thumbnail in case the exif contains a value for orientation. See issue #22. */}}
+			{{ $rotation := "" }}
+			{{ with $metadata.Orientation }}
+				{{/* Exif orientation is explained here: https://www.impulseadventure.com/photo/exif-orientation.html */}}
+				{{/* Example images can be found here: https://github.com/recurser/exif-orientation-examples*/}}
+				{{/* We can fix orientation 3, 6 and 8 by rotating. */}}
+				{{/* To fix orientation 2, 4, 5, 6 we would need to flip the image, sadly hugo can not do that. */}}
+				{{/* So we can only fix them a "bit" by rotating them but they will be mirrored. */}}
+				{{/* An orientation of 2 means that the image only needs to be flipped so we do nothing in that case. */}}
+				{{/* An orientation of 1 means that the image has the correct rotation and is not mirrored. */}}
+				{{ if or (eq . 8) (eq . 7) }}
+					{{ $rotation = " r90" }}
+				{{ else if or (eq . 3) (eq . 4) }}
+					{{ $rotation = " r180" }}
+				{{ else if or (eq . 6) (eq . 5) }}
+					{{ $rotation = " r270" }}
+				{{ end }}
+			{{ end }}
+
+			{{/* Create thumbnail, rotate it if needed */}}
+			{{ $thumbnail := ($original.Fit (printf "%s %s" $resizeOptions $rotation)) }}
 
 
 			<div>
@@ -129,7 +152,7 @@ Ordinal: {{ .Ordinal}}
 						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
 
 						{{ if (eq $previewType "blur") }}
-							{{ $preview_b := ($original.Fit ("32x32 q70 box jpg")) }}
+							{{ $preview_b := ($thumbnail.Fit ("32x32 q70 box jpg")) }}
 							style="filter: blur(25px);"
 							{{ if $embedPreview }}
 								src="data:image/jpeg;base64,{{ $preview_b.Content | base64Encode }}"
@@ -139,7 +162,7 @@ Ordinal: {{ .Ordinal}}
 							class="lazy"
 							data-src="{{ $thumbnail.RelPermalink }}"
 						{{ else if (eq $previewType "color") }}
-							{{ $preview_1p := ($original.Resize ("1x1 box png")) }}
+							{{ $preview_1p := ($thumbnail.Resize ("1x1 box")) }}
 							{{ if $embedPreview }}
 								src="data:image/png;base64,{{ $preview_1p.Content | base64Encode }}"
 							{{ else }}
