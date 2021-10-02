@@ -196,25 +196,11 @@ Ordinal: {{ .Ordinal}}
 		const gallery = $("#{{ $galleryId }}");
 		{{ $lastRowJustification := .Get "lastRow" | default (.Site.Params.galleryLastRow | default "justify") }}
 
-		gallery.justifiedGallery({
-			rowHeight : {{ $rowHeight }},
-			margins : {{ $margins }},
-			border : 0,
-			waitThumbnailsLoad : false,
-			lastRow : {{ $lastRowJustification }},
-			captions : false,
-			// if there is at least one filter option
-			{{ if not (eq $filterOptions "[]") }}
-				// we first show no images at all
-				// till the code way below selects a filter and applies it 
-				// this prevent creating the layout twice
-				filter : () => false
-			{{ end }}
-		});
-
 		// the instance of swipebox, it will be set once justifiedGallery is initialized
 		let swipeboxInstance = null;
 
+		// before the gallery initialization the listener has to be added
+		// else we can get a race condition and the listener is never called
 		gallery.on('jg.complete', () => {
 			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
 				// if there is already some low resolution image data loaded, then we will wait for loading´
@@ -232,6 +218,23 @@ Ordinal: {{ .Ordinal}}
 					{ {{ $justifiedGalleryParameters | safeJS }} }
 				)
 			);
+		});
+
+		// initialize the justified gallery
+		gallery.justifiedGallery({
+			rowHeight : {{ $rowHeight }},
+			margins : {{ $margins }},
+			border : 0,
+			waitThumbnailsLoad : false,
+			lastRow : {{ $lastRowJustification }},
+			captions : false,
+			// if there is at least one filter option
+			{{ if not (eq $filterOptions "[]") }}
+				// we first show no images at all
+				// till the code way below selects a filter and applies it 
+				// this prevent creating the layout twice
+				filter : () => false
+			{{ end }}
 		});
 
 		// only include JS code for filter options if there at least one filter option
