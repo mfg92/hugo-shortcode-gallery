@@ -37,7 +37,7 @@ https://gohugo.io/hugo-modules/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" resizeOptions="600x600 q90 Lanczos" showExif=true previewType="blur" embedPreview="true" >}}
+{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" thumbnailResizeOptions="600x600 q90 Lanczos" showExif=true previewType="blur" embedPreview="true" >}}
 ```
 
 This shortcode will generate a gallery containing all images of the folder *images*.
@@ -57,20 +57,22 @@ The parameter `sortOrder` decides whether the images are sorted ascending ("asc"
 The `rowHeight` parameter determines the height of the rows that are displayed while the
 `margin` parameter defines the gap between the images.
 
-A thumbnail is generated using the `resizeOptions` parameter, they are handed over
+A thumbnail is generated using the `thumbnailResizeOptions` parameter, they are handed over
 to *Hugo's* [image processing](https://gohugo.io/content-management/image-processing/)
 function using the fit method. In the example above, the generated thumbnails have a width of max 600 pixel and
 a height of max 600, the actual width and height depend on the original aspect ratio. The JPEG image quality is 90% and the
 scaling uses the high quality *Lanczos* filter.
 
 If `previewType` is set to "blur" (or "color"), a very low resolution image (or a single pixel image) will be loaded for every image in the gallery first.
-The hight resolution thumbnail images (see `resizeOptions`) will only be loaded if they are on the currently visible part of the page (or close to it).
+The hight resolution thumbnail images (see `thumbnailResizeOptions`) will only be loaded if they are on the currently visible part of the page (or close to it).
 This leads to a faster loading page. You can set `previewType` to "none" to disable this feature and all thumbnails will be directly loaded.
 
 Enable `embedPreview` to let hugo embed the tiny preview image directly in the page HTML as a base64 strings. This reduces the amount of required network round trip times.
 
 The setting `thumbnailHoverEffect` configures what should happen when the mouse hovers above a thumbnail in the gallery.
 It defaults to "none", but it can be set to "enlarge", in that case the image is scaled up (x1.1) in a short smooth animation.
+
+The size of the image as shown in the gallery can be customised using the (optional) `imageResizeOptions` parameter. The syntax is the same as for `thumbnailResizeOptions`. If ommited, the image will be displayed in its original size.
 
 The setting `lastRow` configures the justification of the last row of the grid. When set to "justify", the entire grid including the last row will be fully-justified, right and left. This parameter respects all of the `lastRow` options of Justified Gallery, including "nojustify" and "hide".
 
