@@ -107,7 +107,7 @@ Ordinal: {{ .Ordinal}}
 			{{ end }}
 
 
-			{{/* Compute rotation to correct orientation of thumbnail in case the exif contains a value for orientation. See issue #22. */}}
+			{{/* Compute rotation to correct orientation of thumbnail (and downscaled gallery images) in case the exif contains a value for orientation. See issue #22. */}}
 			{{ $rotation := "" }}
 			{{ with $metadata.Orientation }}
 				{{/* Exif orientation is explained here: https://www.impulseadventure.com/photo/exif-orientation.html */}}
@@ -133,7 +133,8 @@ Ordinal: {{ .Ordinal}}
 			<div>
 				{{ $full := "" }}
 				{{ if $imageResizeOptions }}
-					{{ $full = ($original.Fit (printf "%s %s" $imageResizeOptions)) }}
+					{{/* Downscale gallery image, rotate it if needed */}}
+					{{ $full = ($original.Fit (printf "%s %s" $imageResizeOptions $rotation)) }}
 				{{ else }}
 					{{ $full = $original }}
 				{{ end }}
