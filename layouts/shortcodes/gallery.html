@@ -81,8 +81,8 @@
 Ordinal increases every time this shortcode is used in a document
 Ordinal: {{ .Ordinal}}
 -->
-{{ $galleryId := (printf "gallery-%v" .Ordinal)}}
-{{ $galleryWrapperId := (printf "gallery-%v-wrapper" .Ordinal)}}
+{{ $galleryId := (printf "gallery-%v-%v" .Page.File.UniqueID .Ordinal)}}
+{{ $galleryWrapperId := (printf "gallery-%v-%v-wrapper" .Page.File.UniqueID .Ordinal)}}
 
 <div id="{{ $galleryWrapperId }}" class="gallery-wrapper">
 <div id="{{ $galleryId }}" class="justified-gallery">
