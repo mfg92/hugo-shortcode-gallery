@@ -41,8 +41,7 @@ sudo killall --quiet --signal SIGKILL hugo
 
 echo "Remove any remnants from previous tests by \
 uncommenting this line in the script or run it manually:"
-echo "sudo rm -r -f $SITE"
-# sudo rm -r -f $SITE
+echo `sudo rm --recursive --force --verbose $SITE`
 
 echo "Generate a new site"
 $HUGOPATH new site $SITE
@@ -82,8 +81,7 @@ sudo killall --quiet --signal SIGKILL hugo
 
 echo "Remove any remnants from previous tests by \
 uncommenting this line in the script or run it manually:"
-echo "sudo rm -r -f $OUT_DIR/$SITE/themes/hugo-shortcode-gallery"
-# sudo rm -r -f $OUT_DIR/$SITE/themes/hugo-shortcode-gallery
+echo `sudo rm --recursive --force --verbose $OUT_DIR/$SITE/themes/hugo-shortcode-gallery`
 
 echo "Cloning the hugo-shortcode-gallery git repository into $OUT_DIR/$SITE/themes."
 cd $OUT_DIR/$SITE/themes
