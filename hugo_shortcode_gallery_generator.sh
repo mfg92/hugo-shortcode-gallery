@@ -84,8 +84,7 @@ uncommenting this line in the script or run it manually:"
 echo `sudo rm --recursive --force --verbose $OUT_DIR/$SITE/themes/hugo-shortcode-gallery`
 
 echo "Cloning the hugo-shortcode-gallery git repository into $OUT_DIR/$SITE/themes."
-cd $OUT_DIR/$SITE/themes
-git clone https://github.com/mfg92/hugo-shortcode-gallery.git
+git submodule add https://github.com/mfg92/hugo-shortcode-gallery.git themes/hugo-shortcode-gallery
 
 echo "Adding this theme to $OUT_DIR/$SITE/config.toml using GNU sed"
 
