@@ -10,13 +10,17 @@
 	{{ $filterOptions = "[]" }}
 {{ end }}
 
+{{ $storeSelectedFilterInUrl := .Get "storeSelectedFilterInUrl" | default (.Site.Params.storeSelectedFilterInUrl | default false) }}
+
 {{ $sortOrder := .Get "sortOrder" | default (.Site.Params.gallerySortOrder | default "asc") }}
 
 {{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
 
 {{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
 
-{{ $resizeOptions := .Get "resizeOptions" | default (.Site.Params.galleryResizeOptions | default "300x150 q85 Lanczos") }}
+{{ $thumbnailResizeOptions := .Get "thumbnailResizeOptions" | default (.Site.Params.galleryThumbnailResizeOptions | default "300x150 q85 Lanczos") }}
+
+{{ $imageResizeOptions := .Get "imageResizeOptions" | default .Site.Params.galleryImageResizeOptions }}
 
 {{ $loadJQuery := .Get "loadJQuery" | default (.Site.Params.galleryLoadJQuery | default false) }}
 
@@ -39,20 +43,21 @@
 <!-- Load jquery, jquery-lazy, swipebox and justified_gallery only once per page -->
 {{ if not (.Page.Scratch.Get "galleryLoaded") }}
   	{{ .Page.Scratch.Set "galleryLoaded" true }}
+	<!-- Use relURL to support hugo projects that run in a subdirectory (bug #18) -->
 
 	{{ if $loadJQuery }}
-		<script src="/shortcode-gallery/jquery-3.5.1.min.js"></script>
+		<script src="{{ "/shortcode-gallery/jquery-3.6.0.min.js" | relURL }}"></script>
 	{{ end }}
 	
 	{{ if not (eq $previewType "none") }}
-		<script src="/shortcode-gallery/lazy/jquery.lazy.min.js"></script>
+		<script src="{{ "/shortcode-gallery/lazy/jquery.lazy.min.js" | relURL }}"></script>
 	{{ end }}
 
-	<script src="/shortcode-gallery/swipebox/js/jquery.swipebox.min.js"></script>
-	<link rel="stylesheet" href="/shortcode-gallery/swipebox/css/swipebox.min.css">
+	<script src="{{ "/shortcode-gallery/swipebox/js/jquery.swipebox.min.js" | relURL }}"></script>
+	<link rel="stylesheet" href="{{ "/shortcode-gallery/swipebox/css/swipebox.min.css"| relURL }}">
 
-	<script src="/shortcode-gallery/justified_gallery/jquery.justifiedGallery.min.js"></script>
-	<link rel="stylesheet" href="/shortcode-gallery/justified_gallery/justifiedGallery.min.css"/>
+	<script src="{{ "/shortcode-gallery/justified_gallery/jquery.justifiedGallery.min.js"| relURL }}"></script>
+	<link rel="stylesheet" href="{{ "/shortcode-gallery/justified_gallery/justifiedGallery.min.css"| relURL }}"/>
 {{ end }}
 
 <style>
@@ -76,15 +81,15 @@
 Ordinal increases every time this shortcode is used in a document
 Ordinal: {{ .Ordinal}}
 -->
-{{ $galleryId := (printf "gallery-%v" .Ordinal)}}
-{{ $galleryWrapperId := (printf "gallery-%v-wrapper" .Ordinal)}}
+{{ $galleryId := (printf "gallery-%v-%v" .Page.File.UniqueID .Ordinal)}}
+{{ $galleryWrapperId := (printf "gallery-%v-%v-wrapper" .Page.File.UniqueID .Ordinal)}}
 
 <div id="{{ $galleryWrapperId }}" class="gallery-wrapper">
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ if eq $original.ResourceType "image" }}
-			{{ $thumbnail := ($original.Fit ($resizeOptions)) }}
-
+		
+			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}	
 			{{ $metaFileName := print $original.Name ".meta"}}
 			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 			{{ if $metadata }}
@@ -102,11 +107,43 @@ Ordinal: {{ .Ordinal}}
 			{{ end }}
 
 
+			{{/* Compute rotation to correct orientation of thumbnail (and downscaled gallery images) in case the exif contains a value for orientation. See issue #22. */}}
+			{{ $rotation := "" }}
+			{{ with $metadata.Orientation }}
+				{{/* Exif orientation is explained here: https://www.impulseadventure.com/photo/exif-orientation.html */}}
+				{{/* Example images can be found here: https://github.com/recurser/exif-orientation-examples*/}}
+				{{/* We can fix orientation 3, 6 and 8 by rotating. */}}
+				{{/* To fix orientation 2, 4, 5, 6 we would need to flip the image, sadly hugo can not do that. */}}
+				{{/* So we can only fix them a "bit" by rotating them but they will be mirrored. */}}
+				{{/* An orientation of 2 means that the image only needs to be flipped so we do nothing in that case. */}}
+				{{/* An orientation of 1 means that the image has the correct rotation and is not mirrored. */}}
+				{{ if or (eq . 8) (eq . 7) }}
+					{{ $rotation = " r90" }}
+				{{ else if or (eq . 3) (eq . 4) }}
+					{{ $rotation = " r180" }}
+				{{ else if or (eq . 6) (eq . 5) }}
+					{{ $rotation = " r270" }}
+				{{ end }}
+			{{ end }}
+
+			{{/* Create thumbnail, rotate it if needed */}}
+			{{ $thumbnail := ($original.Fit (printf "%s %s" $thumbnailResizeOptions $rotation)) }}
+
+
 			<div>
-				<a href="{{ $original.RelPermalink }}" 
+				{{ $full := "" }}
+				{{ if $imageResizeOptions }}
+					{{/* Downscale gallery image, rotate it if needed */}}
+					{{ $full = ($original.Fit (printf "%s %s" $imageResizeOptions $rotation)) }}
+				{{ else }}
+					{{ $full = $original }}
+				{{ end }}
+				<a href="{{ $full.RelPermalink }}" 
 					class="galleryImg"
 					{{ with $metadata }}
-						{{ if .ImageDescription }}
+						{{ if .Title }}
+							title="{{ .Title }}"
+						{{ else if .ImageDescription }}
 							title="{{ .ImageDescription }}"
 						{{ end }}
 
@@ -124,7 +161,7 @@ Ordinal: {{ .Ordinal}}
 						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
 
 						{{ if (eq $previewType "blur") }}
-							{{ $preview_b := ($original.Fit ("32x32 q70 box jpg")) }}
+							{{ $preview_b := ($thumbnail.Fit ("32x32 q70 box jpg")) }}
 							style="filter: blur(25px);"
 							{{ if $embedPreview }}
 								src="data:image/jpeg;base64,{{ $preview_b.Content | base64Encode }}"
@@ -134,7 +171,7 @@ Ordinal: {{ .Ordinal}}
 							class="lazy"
 							data-src="{{ $thumbnail.RelPermalink }}"
 						{{ else if (eq $previewType "color") }}
-							{{ $preview_1p := ($original.Resize ("1x1 box png")) }}
+							{{ $preview_1p := ($thumbnail.Resize ("1x1 box png")) }}
 							{{ if $embedPreview }}
 								src="data:image/png;base64,{{ $preview_1p.Content | base64Encode }}"
 							{{ else }}
@@ -168,24 +205,18 @@ Ordinal: {{ .Ordinal}}
 		const gallery = $("#{{ $galleryId }}");
 		{{ $lastRowJustification := .Get "lastRow" | default (.Site.Params.galleryLastRow | default "justify") }}
 
-		gallery.justifiedGallery({
-			rowHeight : {{ $rowHeight }},
-			margins : {{ $margins }},
-			border : 0,
-			waitThumbnailsLoad : false,
-			lastRow : {{ $lastRowJustification }},
-			captions : false,
-		});
-
 		// the instance of swipebox, it will be set once justifiedGallery is initialized
 		let swipeboxInstance = null;
 
+		// before the gallery initialization the listener has to be added
+		// else we can get a race condition and the listener is never called
 		gallery.on('jg.complete', () => {
 			{{ if or (eq $previewType "blur") (eq $previewType "color") }}
 				// if there is already some low resolution image data loaded, then we will wait for loading´
 				// the hi-res until the justified gallery has done the layout
 				$(() => {
 					$('.lazy').Lazy({
+						visibleOnly: true,
 						afterLoad: element => element.css({filter: "none", transition: "filter 1.0s ease-in-out"})
 					});
 				});
@@ -198,6 +229,23 @@ Ordinal: {{ .Ordinal}}
 			);
 		});
 
+		// initialize the justified gallery
+		gallery.justifiedGallery({
+			rowHeight : {{ $rowHeight }},
+			margins : {{ $margins }},
+			border : 0,
+			waitThumbnailsLoad : false,
+			lastRow : {{ $lastRowJustification }},
+			captions : false,
+			// if there is at least one filter option
+			{{ if not (eq $filterOptions "[]") }}
+				// we first show no images at all
+				// till the code way below selects a filter and applies it 
+				// this prevent creating the layout twice
+				filter : () => false
+			{{ end }}
+		});
+
 		// only include JS code for filter options if there at least one filter option
 		{{ if not (eq $filterOptions "[]") }}
 
@@ -205,7 +253,6 @@ Ordinal: {{ .Ordinal}}
 			// for filtering images by their metadata
 			function createMetadataFilter(filterFunction) {
 				return (entry, index, array) => {
-					//let title = $(entry).find("a").attr("title");
 					let meta = $(entry).find("a").attr("data-meta");
 					meta = meta ? JSON.parse(meta) : {};
 					
@@ -213,11 +260,7 @@ Ordinal: {{ .Ordinal}}
 
 					// only those images visible in justified gallery should be displayed
 					// in swipebox (only <a> with class galleryImg are displayed in swipebox)
-					if(include) {
-						$(entry).find("a").addClass("galleryImg");
-					} else {
-						$(entry).find("a").removeClass("galleryImg");
-					}
+					$(entry).find("a").toggleClass("galleryImg", include);
 
 					return include;
 				}
@@ -266,11 +309,12 @@ Ordinal: {{ .Ordinal}}
 				});
 			};
 
+			
 			const filterOptions = {{ $filterOptions | safeJS }};
 			
 			// insert a div for inserting filter buttons before the gallery
-			const filterbar = $("<div class='justified-gallery-filterbar'/>");
-			gallery.before(filterbar);
+			const filterBar = $("<div class='justified-gallery-filterbar'/>");
+			gallery.before(filterBar);
 
 			var wrapper = document.getElementById("{{ $galleryWrapperId }}");
 
@@ -280,7 +324,7 @@ Ordinal: {{ .Ordinal}}
 
 			function setFulltab(activate) {
 				if(activate == wrapper.classList.contains("fulltab")){
-					return;// nothing to do, we are already in the right state
+					return;  // nothing to do, we are already in the right state
 				}
 
 				wrapper.classList.toggle("fulltab");
@@ -298,15 +342,31 @@ Ordinal: {{ .Ordinal}}
 			const fullTabButton = $("<button/>");
 			fullTabButton.html(expandIcon);
 			fullTabButton.click(() => setFulltab(!wrapper.classList.contains("fulltab")));
-			filterbar.append(fullTabButton);
+			filterBar.append(fullTabButton);
 			$(document).keyup(e => {
 				// when ESC is pressed
 				if (e.keyCode === 27){
 					setFulltab(false);
 				}
 			});
+
+			function activateFilterButton(filterButton) {
+				// activate associated filter
+				gallery.justifiedGallery({filter : filterButton.filter});
+				// remove select class from all other selected buttons
+				filterBar.find('.selected').removeClass('selected');
+				filterButton.addClass("selected");
+			};
 	
-			let first = true;
+			// check if the url contains an instruction to apply a specific filter
+			// eg. example.com/images/#gallery-filter=Birds
+			const params = new URLSearchParams(location.hash.replace(/^\#/,""));
+			let activeFilter = params.get('gallery-filter');
+			if (!activeFilter) {
+				// default to first filter
+				activeFilter = filterOptions[0].label;
+			}
+
 			// create a button for each filter entry 
 			filterOptions.forEach(filterConfig => {
 				let filter; // create a filter function based on the available attributes of filterConfig
@@ -324,23 +384,27 @@ Ordinal: {{ .Ordinal}}
 				} else if(filterConfig.description){
 					filter = createImageDescriptionFilter(filterConfig.description);
 				} else {
-					// use always true filter
+					// default to always true filter
 					filter = createMetadataFilter(meta => true);
 				}
 
 				const filterButton = $("<button/>");
 				filterButton.text(filterConfig.label);
+				filterButton.filter = filter;
 				filterButton.click(() => {
-					gallery.justifiedGallery({filter : filter});
-					// remove select class from all other selected buttons
-					filterbar.find('.selected').removeClass('selected');
-					filterButton.addClass("selected");
-				});
-				filterbar.append(filterButton);
+					activateFilterButton(filterButton);
 
-				if(first) {
-					filterButton.trigger("click");
-					first = false;
+					{{ if $storeSelectedFilterInUrl }}
+						// save applied filter in browser url
+						const params = new URLSearchParams(location.hash.replace(/^\#/,""));
+						params.set('gallery-filter', filterConfig.label);+
+						window.history.replaceState("", "", location.pathname + location.search + "#" + params.toString());
+					{{ end }}
+				});
+				filterBar.append(filterButton);
+
+				if(filterConfig.label.toLowerCase() === activeFilter.toLowerCase()) {
+					activateFilterButton(filterButton);
 				}
 			});
 		{{ end }}
