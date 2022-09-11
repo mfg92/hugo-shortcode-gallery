@@ -14,6 +14,8 @@
 
 {{ $sortOrder := .Get "sortOrder" | default (.Site.Params.gallerySortOrder | default "asc") }}
 
+{{ $randomize := .Get "randomize" | default (.Site.Params.galleryRandomize | default "true") }}
+
 {{ $rowHeight := .Get "rowHeight" | default (.Site.Params.galleryRowHeight | default 150) }}
 
 {{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
@@ -204,6 +206,7 @@ Ordinal: {{ .Ordinal}}
 	$( document ).ready(() => {
 		const gallery = $("#{{ $galleryId }}");
 		{{ $lastRowJustification := .Get "lastRow" | default (.Site.Params.galleryLastRow | default "justify") }}
+		{{ $randomize := .Get "randomize" | default (.Site.Params.galleryRandomize | default "false") }}
 
 		// the instance of swipebox, it will be set once justifiedGallery is initialized
 		let swipeboxInstance = null;
@@ -234,6 +237,7 @@ Ordinal: {{ .Ordinal}}
 			rowHeight : {{ $rowHeight }},
 			margins : {{ $margins }},
 			border : 0,
+			randomize : {{ $randomize }},
 			waitThumbnailsLoad : false,
 			lastRow : {{ $lastRowJustification }},
 			captions : false,
