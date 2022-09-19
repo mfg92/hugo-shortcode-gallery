@@ -18,6 +18,8 @@
 
 {{ $margins := .Get "margins" | default (.Site.Params.galleryRowMargins | default 5) }}
 
+{{ $randomize := .Get "randomize" | default (.Site.Params.galleryRandomize | default false) }}
+
 {{ $thumbnailResizeOptions := .Get "thumbnailResizeOptions" | default (.Site.Params.galleryThumbnailResizeOptions | default "300x150 q85 Lanczos") }}
 
 {{ $imageResizeOptions := .Get "imageResizeOptions" | default .Site.Params.galleryImageResizeOptions }}
@@ -234,6 +236,7 @@ Ordinal: {{ .Ordinal}}
 			rowHeight : {{ $rowHeight }},
 			margins : {{ $margins }},
 			border : 0,
+			randomize : {{ $randomize }},
 			waitThumbnailsLoad : false,
 			lastRow : {{ $lastRowJustification }},
 			captions : false,
