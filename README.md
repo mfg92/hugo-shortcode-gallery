@@ -37,7 +37,7 @@ https://gohugo.io/hugo-modules/theme-components/.
 Here is an usage example:
 
 ```
-{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" thumbnailResizeOptions="600x600 q90 Lanczos" showExif=true previewType="blur" embedPreview="true" >}}
+{{< gallery match="images/*" sortOrder="desc" rowHeight="150" margins="5" thumbnailResizeOptions="600x600 q90 Lanczos" showExif=true previewType="blur" embedPreview=true >}}
 ```
 
 This shortcode will generate a gallery containing all images of the folder *images*.
