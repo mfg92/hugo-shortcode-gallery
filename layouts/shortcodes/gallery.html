@@ -188,6 +188,10 @@ Ordinal: {{ .Ordinal}}
 						{{ with $metadata }}
 							{{ if .ImageDescription }}
 								alt="{{ .ImageDescription }}"
+					     		{{ else }}
+								{{ if .Title}}
+									alt="{{ .Title }}"
+								{{ end }}
 							{{ end }}
 						{{ end }}
 					>
