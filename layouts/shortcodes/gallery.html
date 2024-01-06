@@ -136,7 +136,7 @@ Ordinal: {{ .Ordinal}}
 						{{ end }}
 
 						{{ if $showExif }}
-							data-description="{{ .Model }} + {{ .LensModel }}<br/>{{ .FocalLength }}mm f/{{ .FNumber }} {{ .ExposureTime }}sec ISO {{ .ISOSpeedRatings }}"
+							data-description="{{ .Model }}{{ if and .Model .LensModel }} + {{ end }}{{ .LensModel }}<br/>{{ if .FocalLength }}{{ .FocalLength }}mm {{ end }}{{ if .FNumber }}f/{{ .FNumber }} {{ end }}{{ if .ExposureTime }}{{ .ExposureTime }}sec {{ end }} {{ if .ISOSpeedRatings }}ISO {{ .ISOSpeedRatings }}{{ end }}"
 						{{ end }}
 
 						{{ if not (eq $filterOptions "[]")  }}
