@@ -118,7 +118,7 @@ The metadata embedded in a image can be extended/overshadowed by a metadata side
 
 ## Requirements
 
-This component requires a hugo **extended** version >= 0.83.
+This component requires a hugo **extended** version >= 0.121.2.
 
 ## Dependencies
 

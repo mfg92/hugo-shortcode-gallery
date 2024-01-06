@@ -101,7 +101,7 @@ Ordinal: {{ .Ordinal}}
 				{{ $metadata = dict }}
 			{{ end }}
 
-			{{/* If the image has exif informations, those are merged together with the metadata from the file */}}
+			{{/* If the image has EXIF informations, those are merged together with the metadata from the file */}}
 			{{ if in "jpg jpeg tiff" $original.MediaType.SubType }}
 				{{ with $original.Exif }}
 					{{ $metadata = merge .Tags $metadata }}
@@ -109,35 +109,21 @@ Ordinal: {{ .Ordinal}}
 			{{ end }}
 
 
-			{{/* Compute rotation to correct orientation of thumbnail (and downscaled gallery images) in case the exif contains a value for orientation. See issue #22. */}}
-			{{ $rotation := "" }}
-			{{ with $metadata.Orientation }}
-				{{/* Exif orientation is explained here: https://www.impulseadventure.com/photo/exif-orientation.html */}}
-				{{/* Example images can be found here: https://github.com/recurser/exif-orientation-examples*/}}
-				{{/* We can fix orientation 3, 6 and 8 by rotating. */}}
-				{{/* To fix orientation 2, 4, 5, 6 we would need to flip the image, sadly hugo can not do that. */}}
-				{{/* So we can only fix them a "bit" by rotating them but they will be mirrored. */}}
-				{{/* An orientation of 2 means that the image only needs to be flipped so we do nothing in that case. */}}
-				{{/* An orientation of 1 means that the image has the correct rotation and is not mirrored. */}}
-				{{ if or (eq . 8) (eq . 7) }}
-					{{ $rotation = " r90" }}
-				{{ else if or (eq . 3) (eq . 4) }}
-					{{ $rotation = " r180" }}
-				{{ else if or (eq . 6) (eq . 5) }}
-					{{ $rotation = " r270" }}
-				{{ end }}
-			{{ end }}
+			{{/* Correct orientation of the image, this is needed for thumbnails (and downscaled gallery images)
+				 if the EXIF informations contains an orientation value. See issue #22. */}}
+			{{ $rotated := $original.Filter images.AutoOrient }}
 
 			{{/* Create thumbnail, rotate it if needed */}}
-			{{ $thumbnail := ($original.Fit (printf "%s %s" $thumbnailResizeOptions $rotation)) }}
+			{{ $thumbnail := ($rotated.Fit $thumbnailResizeOptions) }}
 
 
 			<div>
 				{{ $full := "" }}
 				{{ if $imageResizeOptions }}
 					{{/* Downscale gallery image, rotate it if needed */}}
-					{{ $full = ($original.Fit (printf "%s %s" $imageResizeOptions $rotation)) }}
+					{{ $full = ($rotated.Fit $imageResizeOptions) }}
 				{{ else }}
+					{{/* No need to use the rotated here, the browser will handle care of EXIF orientation */}}
 					{{ $full = $original }}
 				{{ end }}
 				<a href="{{ $full.RelPermalink }}" 
