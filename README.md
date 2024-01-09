@@ -15,6 +15,19 @@ You can see this shortcode-gallery in action on [my website](https://matze.rocks
 
 ## Installation
 
+### Method A - Install as hugo module
+
+First make sure that your project itself is a [hugo module](https://gohugo.io/hugo-modules/use-modules/#initialize-a-new-module).
+
+Then add these two lines to your hugo.toml (or [config.toml](https://github.com/gohugoio/hugo/issues/8979)) configuration file:
+```
+[[module.imports]]
+path = "github.com/mfg92/hugo-shortcode-gallery"
+```
+
+On the first start of Hugo it will download the required files.
+
+### Method B - Install via git
 Clone this git repository into your *themes* folder. 
 
 ```
@@ -25,7 +38,7 @@ Next edit your projects
 *config.toml* and add this theme component to your themes:
 
 ```
-theme = ["your-main-theme", "hugo-shortcode-gallery"]
+theme = ["YOUR_MAIN_THEME", "hugo-shortcode-gallery"]
 ```
 
 To read about hugo's theme components and how to use them have a look at 
