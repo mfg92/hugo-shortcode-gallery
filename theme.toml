@@ -5,7 +5,7 @@ description = "A theme component with a gallery shortcode for the static site ge
 homepage = "https://github.com/mfg92/hugo-shortcode-gallery"
 demosite = "https://matze.rocks/images"
 tags = ["Gallery", "Responsive", "Shortcode"]
-min_version = 0.121.2
+min_version = "0.121.2"
 
 [author]
   name = "mfg92"
