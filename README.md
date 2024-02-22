@@ -44,6 +44,11 @@ theme = ["YOUR_MAIN_THEME", "hugo-shortcode-gallery"]
 To read about hugo's theme components and how to use them have a look at 
 https://gohugo.io/hugo-modules/theme-components/.
 
+### Shell script to setup a demo gallery
+
+This [shell script](hugo_shortcode_gallery_generator.sh) sets up a hugo site including the short-code gallery and a couple of images.
+
+`curl -sL https://raw.githubusercontent.com/RidaAyed/hugo-shortcode-gallery/CreateExampleSiteScript/hugo_shortcode_gallery_generator.sh | bash -s --`
 
 ## Usage Example
 
