@@ -189,8 +189,11 @@ Ordinal: {{ .Ordinal}}
 </div>
 
 <script>
-	if (!window.jQuery) {
-		throw new Error("jQuery is not loaded, hugo-shortcode-gallery wont work without it!");
+	if (!("HSCGjQuery" in window)) {
+		if (!window.jQuery) {
+			throw new Error("jQuery is not loaded, hugo-shortcode-gallery wont work without it!");
+		}
+		window.HSCGjQuery = window.jQuery.noConflict(true);
 	}
 
 	// Isolate all our variables from other scripts.
@@ -413,5 +416,5 @@ Ordinal: {{ .Ordinal}}
 	// End of our variable-isolating and self-executing anonymous function.
 	// We call it with the one version of jQuery that was used to load our plugins.
 	// See: http://blog.nemikor.com/2009/10/03/using-multiple-versions-of-jquery/
-	})($.noConflict(true))
+	})(window.HSCGjQuery)
 </script>
