@@ -27,6 +27,11 @@ path = "github.com/mfg92/hugo-shortcode-gallery"
 
 On the first start of Hugo it will download the required files.
 
+To update to the latest version of the module run:
+```
+hugo mod get -u
+```
+
 ### Method B - Install via git
 Clone this git repository into your *themes* folder. 
 
@@ -44,6 +49,11 @@ theme = ["YOUR_MAIN_THEME", "hugo-shortcode-gallery"]
 To read about hugo's theme components and how to use them have a look at 
 https://gohugo.io/hugo-modules/theme-components/.
 
+To update to the latest version run inside *themes/hugo-shortcode-gallery*:
+```
+git pull
+```
+Tip: If your project itself is version controlled using git, you may want to have hugo-shortcode-gallery as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 ## Usage Example
 
