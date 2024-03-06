@@ -75,7 +75,7 @@ new-post-name/
         DSC_0002.jpg
 ```
 
-The parameter `sortOrder` decides whether the images are sorted ascending ("asc") or descending ("desc"). `randomize` can be used to have a random order.
+The parameter `sortOrder` decides whether the images are sorted ascending (`asc`) or descending (`desc`). The `randomize` parameter can be used (as `randomize=true`) to have a random order.
 
 The `rowHeight` parameter determines the height of the rows that are displayed while the
 `margin` parameter defines the gap between the images.
