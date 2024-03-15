@@ -1,8 +1,10 @@
 {{ $currentPage := . }}
 
-{{ $images := (.Page.Resources.ByType "image") }}
+{{ $images := slice }}
 {{ if .Get "match"}}
 	{{ $images = (.Page.Resources.Match (.Get "match")) }}
+{{ else }}
+	{{ $images = (.Page.Resources.ByType "image") }}
 {{ end }}
 
 {{ $filterOptions := .Get "filterOptions" | default (.Site.Params.galleryFilterOptions | default "[]") }}
