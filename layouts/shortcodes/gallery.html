@@ -30,6 +30,8 @@
 
 {{ $showExif := .Get "showExif" | default (.Site.Params.galleryShowExif | default false) }}
 
+{{ $swipeboxParameters := .Get "swipeboxParameters" | default (.Site.Params.gallerySwipeboxParameters | default "") }}
+
 {{ $justifiedGalleryParameters := .Get "justifiedGalleryParameters" | default (.Site.Params.galleryJustifiedGalleryParameters | default "") }}
 
 {{ $previewType := .Get "previewType" | default (.Site.Params.galleryPreviewType | default "blur") }}
@@ -228,28 +230,31 @@ Ordinal: {{ .Ordinal}}
 
 				swipeboxInstance = $('.galleryImg').swipebox(
 					$.extend({},
-						{ {{ $justifiedGalleryParameters | safeJS }} }
+						{ {{ $swipeboxParameters | safeJS }} }
 					)
 				);
 			});
 
 			// initialize the justified gallery
-			gallery.justifiedGallery({
-				rowHeight : {{ $rowHeight }},
-				margins : {{ $margins }},
-				border : 0,
-				randomize : {{ $randomize }},
-				waitThumbnailsLoad : false,
-				lastRow : {{ $lastRowJustification }},
-				captions : false,
-				// if there is at least one filter option
-				{{ if not (eq $filterOptions "[]") }}
-					// we first show no images at all
-					// till the code way below selects a filter and applies it 
-					// this prevent creating the layout twice
-					filter : () => false
-				{{ end }}
-			});
+			gallery.justifiedGallery($.extend(
+				{
+					rowHeight : {{ $rowHeight }},
+					margins : {{ $margins }},
+					border : 0,
+					randomize : {{ $randomize }},
+					waitThumbnailsLoad : false,
+					lastRow : {{ $lastRowJustification }},
+					captions : false,
+					// if there is at least one filter option
+					{{ if not (eq $filterOptions "[]") }}
+						// we first show no images at all
+						// till the code way below selects a filter and applies it 
+						// this prevent creating the layout twice
+						filter : () => false
+					{{ end }}
+				},
+				{ {{ $justifiedGalleryParameters | safeJS }} }
+			));
 
 			// only include JS code for filter options if there at least one filter option
 			{{ if not (eq $filterOptions "[]") }}
