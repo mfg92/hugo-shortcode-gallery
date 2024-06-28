@@ -117,10 +117,6 @@ Ordinal: {{ .Ordinal}}
 				 if the EXIF informations contains an orientation value. See issue #22. */}}
 			{{ $rotated := $original.Filter images.AutoOrient }}
 
-			{{/* Create thumbnail, rotate it if needed */}}
-			{{ $thumbnail := ($rotated.Fit $thumbnailResizeOptions) }}
-
-
 			<div>
 				{{ $full := "" }}
 				{{ if $imageResizeOptions }}
@@ -130,6 +126,19 @@ Ordinal: {{ .Ordinal}}
 					{{/* No need to use the rotated here, the browser will handle care of EXIF orientation */}}
 					{{ $full = $original }}
 				{{ end }}
+
+				{{ $thumbnail := "" }}
+				{{ if eq $thumbnailResizeOptions "original" }}
+					{{/* If thumbnailResizeOptions is set to 'original', use the original (unmodified) image for the thumbnail */}}
+					{{ $thumbnail = $original }}
+				{{ else  if eq $thumbnailResizeOptions "full" }}
+					{{/* If thumbnailResizeOptions is set to 'full', use the same image as the lightbox for the thumbnail */}}
+					{{ $thumbnail = $full }}
+				{{ else }}
+					{{/* Create thumbnail, rotate it if needed */}}
+					{{ $thumbnail = ($rotated.Fit $thumbnailResizeOptions) }}
+				{{ end }}
+
 				<a href="{{ $full.RelPermalink }}" 
 					class="galleryImg"
 					{{ with $metadata }}
