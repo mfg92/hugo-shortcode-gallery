@@ -154,7 +154,7 @@ Ordinal: {{ .Ordinal}}
 
 						{{ if not (eq $filterOptions "[]")  }}
 							{{/* only include fields that are currently supported by the filter mechanism (in JS at the end of the file) */}}
-							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription) | jsonify }}"
+							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription "XPKeywords" $metadata.XPKeywords) | jsonify }}"
 						{{ end }}
 					{{ end }}
 					>
@@ -328,6 +328,35 @@ Ordinal: {{ .Ordinal}}
 					});
 				};
 
+				// XPKeywords use UCS-2 encoding. This function decodes it
+				function decodeUTF16LE(numbers) {
+					const uint8Array = new Uint8Array(numbers);
+					let decodedString = '';
+					for (let i = 0; i < uint8Array.length; i += 2) {
+						const charCode = uint8Array[i] + (uint8Array[i + 1] << 8);
+						if (charCode === 0x0000) {
+							break;
+						}
+						decodedString += String.fromCharCode(charCode);
+					}
+					return decodedString;
+				}
+
+				// this function returns a function that can be used by justifiedGallery
+				// for filtering images by their keywords
+				// read keywords from the XPKeywords Exif tag (0x9c9e), in UCS-2
+				// To convert IPTC keywords:
+				//    exiftool -overwrite_original "-XPKeywords<Keywords" *.jpg
+				function createXPKeywordsFilter(tagsRegexString) {
+					const tagsRegex = RegExp(tagsRegexString);
+					return createMetadataFilter(meta => {
+						console.log(meta.XPKeywords);
+						let tags = decodeUTF16LE(meta.XPKeywords).split(",");
+						console.log(tags);
+						tags = tags ? tags : [];
+						return tags.some(tag => tagsRegex.test(tag));
+					});
+				};
 				
 				const filterOptions = {{ $filterOptions | safeJS }};
 				
@@ -402,6 +431,8 @@ Ordinal: {{ .Ordinal}}
 						filter = createColorLabelFilter(filterConfig.color_label);
 					} else if(filterConfig.description){
 						filter = createImageDescriptionFilter(filterConfig.description);
+					} else if(filterConfig.keywords){
+						filter = createXPKeywordsFilter(filterConfig.keywords);
 					} else {
 						// default to always true filter
 						filter = createMetadataFilter(meta => true);
