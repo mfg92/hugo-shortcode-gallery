@@ -89,11 +89,12 @@ Ordinal: {{ .Ordinal}}
 -->
 {{ $galleryId := (printf "gallery-%v-%v" .Page.File.UniqueID .Ordinal)}}
 {{ $galleryWrapperId := (printf "gallery-%v-%v-wrapper" .Page.File.UniqueID .Ordinal)}}
+{{ $supportedFormats := .Site.Params.supportedImageThumbnails | default (slice "jpeg" "png" "tiff" "bmp" "gif") }}
 
 <div id="{{ $galleryWrapperId }}" class="gallery-wrapper">
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
-		{{ if eq $original.ResourceType "image" }}
+		{{ if and (eq $original.ResourceType "image") (in $supportedFormats $original.MediaType.SubType) }}
 		
 			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}	
 			{{ $metaFileName := print $original.Name ".meta"}}
