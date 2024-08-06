@@ -1,9 +1,11 @@
 {{ $currentPage := . }}
 
 {{ $images := slice }}
+{{ $globalMatch := .Get "globalMatch" }}
+
 {{ if .Get "match"}}
 	{{ $images = (.Page.Resources.Match (.Get "match")) }}
-{{ else if .Get "globalMatch"}}
+{{ else if $globalMatch }}
 	{{ $images = (resources.Match (.Get "globalMatch")) }}
 {{ else }}
 	{{ $images = (.Page.Resources.ByType "image") }}
@@ -99,7 +101,12 @@ Ordinal: {{ .Ordinal}}
 
 			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}
 			{{ $metaFileName := print $original.Name ".meta"}}
-			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
+	        {{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
+
+            {{ if $globalMatch }}
+	            {{ $metadata = resources.GetMatch ($metaFileName) }}
+            {{ end }}
+
 			{{ if $metadata }}
 				{{ $metadata = $metadata.Content }}
 				{{ $metadata = $metadata | unmarshal }}
