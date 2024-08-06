@@ -3,6 +3,8 @@
 {{ $images := slice }}
 {{ if .Get "match"}}
 	{{ $images = (.Page.Resources.Match (.Get "match")) }}
+{{ else if .Get "globalMatch"}}
+	{{ $images = (resources.Match (.Get "globalMatch")) }}
 {{ else }}
 	{{ $images = (.Page.Resources.ByType "image") }}
 {{ end }}
@@ -54,7 +56,7 @@
 	{{ if $loadJQuery }}
 		<script src="{{ "shortcode-gallery/jquery-3.7.1.min.js" | relURL }}"></script>
 	{{ end }}
-	
+
 	{{ if not (eq $previewType "none") }}
 		<script src="{{ "shortcode-gallery/lazy/jquery.lazy.min.js" | relURL }}"></script>
 	{{ end }}
@@ -94,8 +96,8 @@ Ordinal: {{ .Ordinal}}
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ if eq $original.ResourceType "image" }}
-		
-			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}	
+
+			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}
 			{{ $metaFileName := print $original.Name ".meta"}}
 			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 			{{ if $metadata }}
@@ -139,7 +141,7 @@ Ordinal: {{ .Ordinal}}
 					{{ $thumbnail = ($rotated.Fit $thumbnailResizeOptions) }}
 				{{ end }}
 
-				<a href="{{ $full.RelPermalink }}" 
+				<a href="{{ $full.RelPermalink }}"
 					class="galleryImg"
 					{{ with $metadata }}
 						{{ if .Title }}
@@ -158,7 +160,7 @@ Ordinal: {{ .Ordinal}}
 						{{ end }}
 					{{ end }}
 					>
-					<img			
+					<img
 						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
 
 						{{ if (eq $previewType "blur") }}
@@ -257,7 +259,7 @@ Ordinal: {{ .Ordinal}}
 					// if there is at least one filter option
 					{{ if not (eq $filterOptions "[]") }}
 						// we first show no images at all
-						// till the code way below selects a filter and applies it 
+						// till the code way below selects a filter and applies it
 						// this prevent creating the layout twice
 						filter : () => false
 					{{ end }}
@@ -274,7 +276,7 @@ Ordinal: {{ .Ordinal}}
 					return (entry, index, array) => {
 						let meta = $(entry).find("a").attr("data-meta");
 						meta = meta ? JSON.parse(meta) : {};
-						
+
 						let include = filterFunction(meta);
 
 						// only those images visible in justified gallery should be displayed
@@ -328,9 +330,9 @@ Ordinal: {{ .Ordinal}}
 					});
 				};
 
-				
+
 				const filterOptions = {{ $filterOptions | safeJS }};
-				
+
 				// insert a div for inserting filter buttons before the gallery
 				const filterBar = $("<div class='justified-gallery-filterbar'/>");
 				gallery.before(filterBar);
@@ -376,7 +378,7 @@ Ordinal: {{ .Ordinal}}
 					filterBar.find('.selected').removeClass('selected');
 					filterButton.addClass("selected");
 				};
-		
+
 				// check if the url contains an instruction to apply a specific filter
 				// eg. example.com/images/#gallery-filter=Birds
 				const params = new URLSearchParams(location.hash.replace(/^\#/,""));
@@ -386,7 +388,7 @@ Ordinal: {{ .Ordinal}}
 					activeFilter = filterOptions[0].label;
 				}
 
-				// create a button for each filter entry 
+				// create a button for each filter entry
 				filterOptions.forEach(filterConfig => {
 					let filter; // create a filter function based on the available attributes of filterConfig
 					if(filterConfig.tags) {
