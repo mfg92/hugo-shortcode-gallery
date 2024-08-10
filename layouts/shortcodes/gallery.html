@@ -149,7 +149,7 @@ Ordinal: {{ .Ordinal}}
 						{{ end }}
 
 						{{ if $showExif }}
-							data-description="{{ .Model }}{{ if and .Model .LensModel }} + {{ end }}{{ .LensModel }}<br/>{{ if .FocalLength }}{{ .FocalLength }}mm {{ end }}{{ if .FNumber }}f/{{ .FNumber }} {{ end }}{{ if .ExposureTime }}{{ .ExposureTime }}sec {{ end }} {{ if .ISOSpeedRatings }}ISO {{ .ISOSpeedRatings }}{{ end }}"
+							data-description="{{ .Model }}{{ if and .Model .LensModel }} + {{ end }}{{ .LensModel }}<br/>{{ if .FocalLength }}{{ .FocalLength }}mm {{ end }}{{ if .FNumber }}f/{{ printf "%.1f" .FNumber.Float64 }} {{ end }}{{ if .ExposureTime }}{{ .ExposureTime }}sec {{ end }} {{ if .ISOSpeedRatings }}ISO {{ .ISOSpeedRatings }}{{ end }}"
 						{{ end }}
 
 						{{ if not (eq $filterOptions "[]")  }}
