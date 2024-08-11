@@ -2,9 +2,10 @@
 
 {{ $images := slice }}
 {{ $globalMatch := .Get "globalMatch" }}
+{{ $localMatch := .Get "match" }}
 
-{{ if .Get "match"}}
-	{{ $images = (.Page.Resources.Match (.Get "match")) }}
+{{ if $localMatch }}
+	{{ $images = (.Page.Resources.Match $localMatch )}}
 {{ else if $globalMatch }}
 	{{ $images = (resources.Match (.Get "globalMatch")) }}
 {{ else }}
@@ -103,7 +104,7 @@ Ordinal: {{ .Ordinal}}
 			{{ $metaFileName := print $original.Name ".meta"}}
 			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 
-			{{ if $globalMatch }}
+			{{ if and $globalMatch (not $localMatch) }}
 				{{ $metadata = resources.GetMatch ($metaFileName) }}
 			{{ end }}
 
