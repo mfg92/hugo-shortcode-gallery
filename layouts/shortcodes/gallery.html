@@ -48,7 +48,7 @@
 
 <!-- Load jquery, jquery-lazy, swipebox and justified_gallery only once per page -->
 {{ if not (.Page.Scratch.Get "galleryLoaded") }}
-  	{{ .Page.Scratch.Set "galleryLoaded" true }}
+	{{ .Page.Scratch.Set "galleryLoaded" true }}
 	<!-- Use relURL to support hugo projects that run in a subdirectory (bug #18) -->
 
 	{{ if $loadJQuery }}
@@ -94,8 +94,8 @@ Ordinal: {{ .Ordinal}}
 <div id="{{ $galleryId }}" class="justified-gallery">
 	{{ range $original := sort $images "Name" $sortOrder}}
 		{{ if eq $original.ResourceType "image" }}
-		
-			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}	
+
+			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}
 			{{ $metaFileName := print $original.Name ".meta"}}
 			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 			{{ if $metadata }}
@@ -131,7 +131,7 @@ Ordinal: {{ .Ordinal}}
 				{{ if eq $thumbnailResizeOptions "original" }}
 					{{/* If thumbnailResizeOptions is set to 'original', use the original (unmodified) image for the thumbnail */}}
 					{{ $thumbnail = $original }}
-				{{ else  if eq $thumbnailResizeOptions "full" }}
+				{{ else if eq $thumbnailResizeOptions "full" }}
 					{{/* If thumbnailResizeOptions is set to 'full', use the same image as the lightbox for the thumbnail */}}
 					{{ $thumbnail = $full }}
 				{{ else }}
@@ -139,7 +139,7 @@ Ordinal: {{ .Ordinal}}
 					{{ $thumbnail = ($rotated.Fit $thumbnailResizeOptions) }}
 				{{ end }}
 
-				<a href="{{ $full.RelPermalink }}" 
+				<a href="{{ $full.RelPermalink }}"
 					class="galleryImg"
 					{{ with $metadata }}
 						{{ if .Title }}
@@ -152,13 +152,13 @@ Ordinal: {{ .Ordinal}}
 							data-description="{{ .Model }}{{ if and .Model .LensModel }} + {{ end }}{{ .LensModel }}<br/>{{ if .FocalLength }}{{ .FocalLength }}mm {{ end }}{{ if .FNumber }}f/{{ .FNumber }} {{ end }}{{ if .ExposureTime }}{{ .ExposureTime }}sec {{ end }} {{ if .ISOSpeedRatings }}ISO {{ .ISOSpeedRatings }}{{ end }}"
 						{{ end }}
 
-						{{ if not (eq $filterOptions "[]")  }}
+						{{ if not (eq $filterOptions "[]") }}
 							{{/* only include fields that are currently supported by the filter mechanism (in JS at the end of the file) */}}
 							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription) | jsonify }}"
 						{{ end }}
 					{{ end }}
 					>
-					<img			
+					<img
 						width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}"
 
 						{{ if (eq $previewType "blur") }}
@@ -187,7 +187,7 @@ Ordinal: {{ .Ordinal}}
 						{{ with $metadata }}
 							{{ if .ImageDescription }}
 								alt="{{ .ImageDescription }}"
-					     		{{ else }}
+							{{ else }}
 								{{ if .Title}}
 									alt="{{ .Title }}"
 								{{ end }}
@@ -388,7 +388,7 @@ Ordinal: {{ .Ordinal}}
 
 				// create a button for each filter entry 
 				filterOptions.forEach(filterConfig => {
-					let filter; // create a filter function based on the available attributes of filterConfig
+					let filter;  // create a filter function based on the available attributes of filterConfig
 					if(filterConfig.tags) {
 						filter = createTagFilter(filterConfig.tags);
 					} else if(filterConfig.rating){
