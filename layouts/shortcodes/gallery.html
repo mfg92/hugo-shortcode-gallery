@@ -102,10 +102,12 @@ Ordinal: {{ .Ordinal}}
 
 			{{/* Get metadata from sidecar file, if present. Else an empty dictionary is used. */}}
 			{{ $metaFileName := print $original.Name ".meta"}}
-			{{ $metadata := $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 
+			{{ $metadata := slice }}
 			{{ if and $globalMatch (not $localMatch) }}
 				{{ $metadata = resources.GetMatch ($metaFileName) }}
+			{{ else }}
+				{{ $metadata = $currentPage.Page.Resources.GetMatch ($metaFileName) }}
 			{{ end }}
 
 			{{ if $metadata }}
