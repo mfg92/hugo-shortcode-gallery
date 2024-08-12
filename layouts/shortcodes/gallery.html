@@ -154,7 +154,7 @@ Ordinal: {{ .Ordinal}}
 
 						{{ if not (eq $filterOptions "[]") }}
 							{{/* only include fields that are currently supported by the filter mechanism (in JS at the end of the file) */}}
-							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription) | jsonify }}"
+							data-meta="{{ (dict "Tags" .Tags "Rating" .Rating "ColorLabels" .ColorLabels "ImageDescription" .ImageDescription) | jsonify }}"
 						{{ end }}
 					{{ end }}
 					>
