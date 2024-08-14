@@ -143,7 +143,7 @@ Ordinal: {{ .Ordinal}}
 				{{ if eq $thumbnailResizeOptions "original" }}
 					{{/* If thumbnailResizeOptions is set to 'original', use the original (unmodified) image for the thumbnail */}}
 					{{ $thumbnail = $original }}
-				{{ else  if eq $thumbnailResizeOptions "full" }}
+				{{ else if eq $thumbnailResizeOptions "full" }}
 					{{/* If thumbnailResizeOptions is set to 'full', use the same image as the lightbox for the thumbnail */}}
 					{{ $thumbnail = $full }}
 				{{ else }}
@@ -161,12 +161,12 @@ Ordinal: {{ .Ordinal}}
 						{{ end }}
 
 						{{ if $showExif }}
-							data-description="{{ .Model }}{{ if and .Model .LensModel }} + {{ end }}{{ .LensModel }}<br/>{{ if .FocalLength }}{{ .FocalLength }}mm {{ end }}{{ if .FNumber }}f/{{ .FNumber }} {{ end }}{{ if .ExposureTime }}{{ .ExposureTime }}sec {{ end }} {{ if .ISOSpeedRatings }}ISO {{ .ISOSpeedRatings }}{{ end }}"
+							data-description="{{ .Model }}{{ if and .Model .LensModel }} + {{ end }}{{ .LensModel }}<br/>{{ if .FocalLength }}{{ .FocalLength }}mm {{ end }}{{ if .FNumber }}f/{{ .FNumber }} {{ end }}{{ if .ExposureTime }}{{ .ExposureTime }}sec {{ end }} {{ if .ISO }}ISO {{ .ISO }}{{ end }}"
 						{{ end }}
 
-						{{ if not (eq $filterOptions "[]")	}}
+						{{ if not (eq $filterOptions "[]") }}
 							{{/* only include fields that are currently supported by the filter mechanism (in JS at the end of the file) */}}
-							data-meta="{{ (dict "Tags" $metadata.Tags "Rating" $metadata.Rating "ColorLabels" $metadata.ColorLabels "ImageDescription" $metadata.ImageDescription) | jsonify }}"
+							data-meta="{{ (dict "Tags" .Tags "Rating" .Rating "ColorLabels" .ColorLabels "ImageDescription" .ImageDescription) | jsonify }}"
 						{{ end }}
 					{{ end }}
 					>
@@ -400,7 +400,7 @@ Ordinal: {{ .Ordinal}}
 
 				// create a button for each filter entry
 				filterOptions.forEach(filterConfig => {
-					let filter; // create a filter function based on the available attributes of filterConfig
+					let filter;  // create a filter function based on the available attributes of filterConfig
 					if(filterConfig.tags) {
 						filter = createTagFilter(filterConfig.tags);
 					} else if(filterConfig.rating){
