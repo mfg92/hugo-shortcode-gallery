@@ -1,6 +1,6 @@
 # hugo-shortcode-gallery
 
-This is a theme component for hugo.
+This is a theme component for Hugo.
 
 This component contains a shortcode to include a gallery in your .md files.
 
@@ -17,7 +17,7 @@ You can see this shortcode-gallery in action on [my website](https://matze.rocks
 
 ### Method A - Install as hugo module
 
-First make sure that your project itself is a [hugo module](https://gohugo.io/hugo-modules/use-modules/#initialize-a-new-module).
+First make sure that your project itself is a [Hugo module](https://gohugo.io/hugo-modules/use-modules/#initialize-a-new-module).
 
 Then add these two lines to your hugo.toml (or [config.toml](https://github.com/gohugoio/hugo/issues/8979)) configuration file:
 ```
@@ -46,7 +46,7 @@ Next edit your projects
 theme = ["YOUR_MAIN_THEME", "hugo-shortcode-gallery"]
 ```
 
-To read about hugo's theme components and how to use them have a look at
+To read about Hugo's theme components and how to use them have a look at
 https://gohugo.io/hugo-modules/theme-components/.
 
 To update to the latest version run inside *themes/hugo-shortcode-gallery*:
@@ -90,7 +90,7 @@ If `previewType` is set to "blur" (or "color"), a very low resolution image (or 
 The high resolution thumbnail images (see `thumbnailResizeOptions`) will only be loaded if they are on the currently visible part of the page (or close to it).
 This leads to a faster loading page. You can set `previewType` to "none" to disable this feature and all thumbnails will be directly loaded.
 
-Enable `embedPreview` to let hugo embed the tiny preview image directly in the page HTML as a base64 strings. This reduces the amount of required network round trip times.
+Enable `embedPreview` to let Hugo embed the tiny preview image directly in the page HTML as a base64 strings. This reduces the amount of required network round trip times.
 
 The setting `thumbnailHoverEffect` configures what should happen when the mouse hovers above a thumbnail in the gallery.
 It defaults to "none", but it can be set to "enlarge", in that case the image is scaled up (x1.1) in a short smooth animation.
@@ -204,7 +204,7 @@ to show them full screen. These dependencies are included in this repository.
 
 ## Troubleshooting
 
-When bigger galleries are processed it can be required to set hugo's timeout property in the *config.toml* to a higher value:
+When bigger galleries are processed it can be required to set Hugo's timeout property in the *config.toml* to a higher value:
 ```
 timeout = 60000 # This is required for larger galleries to be build (60 sec)
 ```
