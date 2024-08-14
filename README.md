@@ -64,7 +64,7 @@ Here is an usage example:
 ```
 
 This shortcode will generate a gallery containing all images of the folder *images*.
-The folder must be next to the .md file where this gallery is used in. This uses [page bundles](https://gohugo.io/content-management/page-bundles/)
+The folder must be located next to the .md file where this gallery is used in. This uses [page bundles](https://gohugo.io/content-management/page-bundles/)
 so the directory layout should look like this:
 
 ```
@@ -87,7 +87,7 @@ a height of max 600, the actual width and height depend on the original aspect r
 scaling uses the high quality *Lanczos* filter.
 
 If `previewType` is set to "blur" (or "color"), a very low resolution image (or a single pixel image) will be loaded for every image in the gallery first.
-The hight resolution thumbnail images (see `thumbnailResizeOptions`) will only be loaded if they are on the currently visible part of the page (or close to it).
+The high resolution thumbnail images (see `thumbnailResizeOptions`) will only be loaded if they are on the currently visible part of the page (or close to it).
 This leads to a faster loading page. You can set `previewType` to "none" to disable this feature and all thumbnails will be directly loaded.
 
 Enable `embedPreview` to let hugo embed the tiny preview image directly in the page HTML as a base64 strings. This reduces the amount of required network round trip times.
