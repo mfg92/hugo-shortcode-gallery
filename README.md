@@ -161,7 +161,7 @@ In both `content/gallery/index.md` and `content/news/some_news/index.md` you can
 ```
 {{<gallery
     globalMatch="images/something/*"
-    sortOrder="asec"
+    sortOrder="asc"
     rowHeight="150"
     margins="5"
     thumbnailResizeOptions="600x600 q90 Lanczos"
